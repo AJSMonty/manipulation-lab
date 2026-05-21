@@ -87,7 +87,9 @@ export default function App() {
   }, []);
 
   const printThis = useCallback(() => {
-    scrollToChapter(6);
+    const ch6 = document.getElementById('ch6');
+    ch6?.scrollIntoView({ behavior: 'auto', block: 'start' });
+    ch6?.querySelectorAll('.fade-up').forEach((el) => el.classList.add('visible'));
     requestAnimationFrame(() => {
       window.print();
     });

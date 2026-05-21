@@ -555,6 +555,29 @@
     background: rgba(214,60,47,0.15); color: var(--red);
     padding: 4px 12px; border-radius: 2px; margin-bottom: 12px;
   }
+  .facilitator-notes {
+    padding: 20px 24px;
+    background: rgba(214,60,47,0.06);
+    border: 1px solid rgba(214,60,47,0.2);
+    border-radius: 4px;
+    margin-bottom: 32px;
+  }
+  .facilitator-notes-label {
+    font-size: 11px;
+    font-family: var(--font-head);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--red);
+    margin-bottom: 10px;
+  }
+  .facilitator-notes p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+  .facilitator-notes p:last-child { margin-bottom: 0; }
+  .facilitator-notes strong { color: var(--white); }
 
   /* ---- CHAPTER 7: TAKEAWAYS ---- */
   #ch7 { background: var(--black); }
@@ -633,37 +656,133 @@
 
   /* ---- PRINT: lesson plan only (Chapter 6) ---- */
   @media print {
+    @page {
+      margin: 1.5cm;
+      size: A4;
+    }
+
     #global-progress,
     #chapter-nav {
       display: none !important;
     }
 
     body {
-      background: #fff;
-      color: #111;
+      background: #fff !important;
+      color: #111 !important;
+      font-size: 11pt;
+      line-height: 1.5;
+    }
+
+    .fade-up {
+      opacity: 1 !important;
+      transform: none !important;
     }
 
     .chapter {
       display: none !important;
       padding: 0;
+      min-height: auto !important;
+      border: none !important;
     }
 
     #ch6 {
       display: block !important;
+      background: #fff !important;
+      padding: 0 !important;
     }
 
-    #ch6 .ch-label,
-    #ch6 .ch-title,
-    #ch6 .ch-intro,
-    #ch6 .lesson-step,
-    #ch6 .say-block,
-    #ch6 .do-block {
+    #ch6 .container {
+      max-width: 100%;
+      padding: 0;
+    }
+
+    #ch6 .ch-label {
+      color: #b83228 !important;
+      margin-bottom: 8px;
+    }
+
+    #ch6 .ch-title {
+      color: #111 !important;
+      font-size: 22pt;
+      margin-bottom: 12px;
+    }
+
+    #ch6 .ch-intro {
+      color: #444 !important;
+      margin-bottom: 20px;
+      max-width: none;
+    }
+
+    #ch6 .facilitator-notes {
+      background: #fef5f4 !important;
+      border: 1px solid #e8c4c0 !important;
+      margin-bottom: 24px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    #ch6 .facilitator-notes-label {
+      color: #b83228 !important;
+    }
+
+    #ch6 .facilitator-notes p,
+    #ch6 .facilitator-notes strong {
+      color: #333 !important;
+    }
+
+    #ch6 .lesson-step {
+      page-break-inside: avoid;
+      padding: 20px 0;
+      border-bottom-color: #ddd !important;
+    }
+
+    #ch6 .step-num {
+      color: #b83228 !important;
+    }
+
+    #ch6 .step-title {
       color: #111 !important;
     }
 
-    #ch6 .say-block,
+    #ch6 .step-desc {
+      color: #444 !important;
+    }
+
+    #ch6 .time-pill {
+      background: #fde8e6 !important;
+      color: #b83228 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    #ch6 .say-block {
+      background: #f0f7f2 !important;
+      border-left: 3px solid #2a7a4b !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    #ch6 .say-block .say-tag {
+      color: #2a7a4b !important;
+    }
+
+    #ch6 .say-block p {
+      color: #333 !important;
+    }
+
     #ch6 .do-block {
-      border-color: #ccc !important;
-      background: #f5f5f5 !important;
+      background: #fef9ee !important;
+      border-left: 3px solid #c88700 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    #ch6 .do-block .do-tag {
+      color: #9a6800 !important;
+    }
+
+    #ch6 .do-block p,
+    #ch6 .do-block strong {
+      color: #333 !important;
     }
   }

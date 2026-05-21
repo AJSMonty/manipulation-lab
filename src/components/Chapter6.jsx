@@ -14,36 +14,14 @@ export function Chapter6() {
           to run it.
         </p>
 
-        <div
-          className="fade-up"
-          style={{
-            padding: '20px 24px',
-            background: 'rgba(214,60,47,0.06)',
-            border: '1px solid rgba(214,60,47,0.2)',
-            borderRadius: '4px',
-            marginBottom: '32px',
-          }}
-        >
-          <p
-            style={{
-              fontSize: '11px',
-              fontFamily: 'var(--font-head)',
-              fontWeight: 700,
-              letterSpacing: '0.12em',
-              color: 'var(--red)',
-              marginBottom: '10px',
-            }}
-          >
-            FACILITATOR NOTES
-          </p>
-          <p style={{ fontSize: '14px', color: 'var(--muted)', lineHeight: 1.7, marginBottom: '10px' }}>
+        <div className="facilitator-notes fade-up">
+          <p className="facilitator-notes-label">FACILITATOR NOTES</p>
+          <p>
             Scenario topics in the online experiment (climate, finance, global affairs, etc.) are
             intentionally provocative. For younger or sensitive groups, pre-select{' '}
-            <strong style={{ color: 'var(--white)' }}>health</strong> or{' '}
-            <strong style={{ color: 'var(--white)' }}>fitness</strong>; skip finance and global
-            if needed.
+            <strong>health</strong> or <strong>fitness</strong>; skip finance and global if needed.
           </p>
-          <p style={{ fontSize: '14px', color: 'var(--muted)', lineHeight: 1.7 }}>
+          <p>
             Examples use UK framing (FCA, Manchester, Treasury references). Ask students to
             generate local equivalents when you name tricks — their examples are always more
             memorable than yours.
