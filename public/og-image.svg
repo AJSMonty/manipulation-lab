@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="The Manipulation Lab  How social media rewires your beliefs">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="100%" stop-color="#1a1030"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="48" y="48" width="1104" height="534" rx="8" fill="none" stroke="rgba(196,181,253,0.25)" stroke-width="2"/>
+  <text x="96" y="180" fill="#c4b5fd" font-family="Georgia, serif" font-size="28" letter-spacing="0.18em">A PSYCHOLOGICAL EXPERIMENT</text>
+  <text x="96" y="290" fill="#f5f2ec" font-family="Georgia, serif" font-size="88" font-weight="700">The</text>
+  <text x="96" y="390" fill="#a78bfa" font-family="Georgia, serif" font-size="104" font-style="italic" font-weight="700">Manipulation</text>
+  <text x="96" y="490" fill="#f5f2ec" font-family="Georgia, serif" font-size="88" font-weight="700">Lab</text>
+  <text x="96" y="560" fill="rgba(245,242,236,0.55)" font-family="Arial, sans-serif" font-size="28">Free interactive media literacy training</text>
+</svg>

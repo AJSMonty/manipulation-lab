@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react';
 import './App.css';
 import { useScrollEffects, scrollToChapter } from './hooks/useScrollEffects';
+import { SeoHead } from './components/SeoHead';
+import { SeoFaq } from './components/SeoFaq';
 import { Chapter0 } from './components/Chapter0';
 import { Chapter1 } from './components/Chapter1';
 import { Chapter2 } from './components/Chapter2';
@@ -9,6 +11,7 @@ import { Chapter4 } from './components/Chapter4';
 import { Chapter5 } from './components/Chapter5';
 import { Chapter6 } from './components/Chapter6';
 import { Chapter7 } from './components/Chapter7';
+import { SITE } from './config/site';
 
 const CHAPTER_NAV = [
   'Intro',
@@ -97,11 +100,13 @@ export default function App() {
 
   return (
     <>
+      <SeoHead />
+
       <div id="global-progress">
         <div id="global-progress-fill" />
       </div>
 
-      <nav id="chapter-nav">
+      <nav id="chapter-nav" aria-label="Chapter navigation">
         {CHAPTER_NAV.map((title, i) => (
           <div
             key={title}
@@ -115,6 +120,7 @@ export default function App() {
         ))}
       </nav>
 
+      <main id="main-content">
       <Chapter0 scrollToChapter={scrollToChapter} />
       <Chapter1
         currentScenario={currentScenario}
@@ -147,6 +153,19 @@ export default function App() {
       <Chapter5 toggleEbar={toggleEbar} scrollToChapter={scrollToChapter} />
       <Chapter6 />
       <Chapter7 shareThis={shareThis} printThis={printThis} />
+      <SeoFaq />
+      </main>
+
+      <footer className="site-footer">
+        <div className="container">
+          <p className="site-footer-title">{SITE.name}</p>
+          <p className="site-footer-copy">
+            Free interactive media literacy training. Built on inoculation theory research from
+            Cambridge University and the SIFT methodology from the University of Washington. All
+            example posts are entirely fictional.
+          </p>
+        </div>
+      </footer>
     </>
   );
 }

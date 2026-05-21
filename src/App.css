@@ -809,3 +809,62 @@
       color: #333 !important;
     }
   }
+
+  /* SEO / AEO reference section */
+  .seo-faq {
+    border-top: 1px solid var(--border);
+    padding-bottom: 80px;
+  }
+
+  .faq-list {
+    margin: 0;
+    display: grid;
+    gap: 16px;
+  }
+
+  .faq-item {
+    padding: 20px 24px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  .faq-question {
+    margin: 0 0 10px;
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.35;
+  }
+
+  .faq-answer {
+    margin: 0;
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0 56px;
+    background: rgba(0, 0, 0, 0.35);
+  }
+
+  .site-footer-title {
+    margin: 0 0 10px;
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--purple);
+  }
+
+  .site-footer-copy {
+    margin: 0;
+    max-width: 720px;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
