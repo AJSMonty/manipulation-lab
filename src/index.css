@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+}
+
+#root {
+  max-width: none;
+  margin: 0;
+  text-align: left;
+  border: none;
+  min-height: auto;
+  display: block;
+}
