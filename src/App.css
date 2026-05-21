@@ -645,6 +645,29 @@
     .step-num { width: auto; }
     .takeaway-item { flex-direction: column; gap: 8px; }
     .ti-num { font-size: 32px; }
+
+    /* Hero: max-content title was stretching the container past the viewport */
+    #ch0 .container {
+      width: 100%;
+      min-width: 0;
+    }
+    .hero-title {
+      width: 100%;
+      font-size: clamp(32px, 9vw, 56px);
+    }
+    .hero-title-accent em {
+      font-size: min(1em, calc((100vw - 48px) / 11.5));
+      max-width: 100%;
+      transform: none;
+    }
+    .hero-sub,
+    .hero-warning {
+      width: 100%;
+      max-width: 100%;
+      overflow-wrap: break-word;
+    }
+    .hero-sub { font-size: 16px; }
+    .hero-warning { padding-inline: 4px; }
   }
 
   /* ---- ANIMATIONS ON SCROLL ---- */
