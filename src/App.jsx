@@ -114,6 +114,7 @@ export default function App() {
             onClick={() => scrollToChapter(i)}
             onKeyDown={(e) => e.key === 'Enter' && scrollToChapter(i)}
             title={title}
+            data-label={title}
             role="button"
             tabIndex={0}
           />

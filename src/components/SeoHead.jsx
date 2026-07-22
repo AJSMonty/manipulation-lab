@@ -43,19 +43,23 @@ export function SeoHead() {
 
     upsertMeta('property', 'og:type', 'website');
     upsertMeta('property', 'og:site_name', SITE.name);
-    upsertMeta('property', 'og:title', SITE.title);
-    upsertMeta('property', 'og:description', SITE.description);
+    upsertMeta('property', 'og:title', SITE.ogTitle);
+    upsertMeta('property', 'og:description', SITE.ogDescription);
     upsertMeta('property', 'og:url', SITE_URL);
     upsertMeta('property', 'og:locale', SITE.locale);
-    upsertMeta('property', 'og:image', `${SITE_URL}/og-image.svg`);
+    upsertMeta('property', 'og:image', `${SITE_URL}/og-image.png`);
+    upsertMeta('property', 'og:image:secure_url', `${SITE_URL}/og-image.png`);
+    upsertMeta('property', 'og:image:type', 'image/png');
     upsertMeta('property', 'og:image:alt', SITE.ogImageAlt);
     upsertMeta('property', 'og:image:width', '1200');
     upsertMeta('property', 'og:image:height', '630');
 
     upsertMeta('name', 'twitter:card', 'summary_large_image');
-    upsertMeta('name', 'twitter:title', SITE.title);
-    upsertMeta('name', 'twitter:description', SITE.description);
-    upsertMeta('name', 'twitter:image', `${SITE_URL}/og-image.svg`);
+    upsertMeta('name', 'twitter:site', SITE.twitterHandle);
+    upsertMeta('name', 'twitter:creator', SITE.twitterHandle);
+    upsertMeta('name', 'twitter:title', SITE.ogTitle);
+    upsertMeta('name', 'twitter:description', SITE.ogDescription);
+    upsertMeta('name', 'twitter:image', `${SITE_URL}/og-image.png`);
     upsertMeta('name', 'twitter:image:alt', SITE.ogImageAlt);
 
     upsertLink('canonical', SITE_URL);

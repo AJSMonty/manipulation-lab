@@ -2,6 +2,11 @@
 
 Interactive experience about how social media rewires beliefs — converted from a single HTML file to a React + Vite app.
 
+The experiment in Chapter 1 has two modes, switchable via tabs:
+
+- **The social feed** — a phone-framed fabricated feed with live-ticking engagement counts and working like/repost buttons. At reveal, every post is stamped with an evidence tag and the learner is shown which fabricated posts they personally engaged with.
+- **The AI chat** — the same fabricated claim, asked to a scripted AI assistant in private. Demonstrates four AI manipulation patterns (sycophancy, false authority / invented citations, fake comfort, illusory balance), annotated at reveal alongside a social-vs-AI comparison table.
+
 ## Audience
 
 Parents, educators, and general internet users. The built-in lesson plan targets ages 10–12 but the core experiment works for teens and adults.

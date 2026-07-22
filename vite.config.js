@@ -13,6 +13,8 @@ function seoInjectPlugin(mode) {
     __SITE_URL__: siteUrl,
     __SITE_TITLE__: SITE.title,
     __SITE_DESCRIPTION__: SITE.description,
+    __OG_TITLE__: SITE.ogTitle,
+    __OG_DESCRIPTION__: SITE.ogDescription,
     __STRUCTURED_DATA__: structuredDataJson(siteUrl),
   };
 
@@ -24,6 +26,29 @@ function seoInjectPlugin(mode) {
   }
 
   const robotsTxt = apply(`User-agent: *
+Allow: /
+
+# AI / answer-engine crawlers are explicitly welcome — this site is
+# built to be quoted: FAQ answers, defined terms, and lesson steps.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
 Allow: /
 
 Sitemap: __SITE_URL__/sitemap.xml
