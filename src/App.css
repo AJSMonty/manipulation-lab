@@ -60,8 +60,8 @@
   /* ---- CHAPTERS ---- */
   .chapter {
     min-height: 100vh; display: flex; flex-direction: column;
-    justify-content: center; padding: 80px 0;
-    border-bottom: 1px solid var(--border);
+    justify-content: center; padding: 110px 0;
+    position: relative;
   }
 
   /* ---- CHAPTER 0: HERO ---- */
@@ -1075,4 +1075,136 @@
     background: none; border: none; color: var(--purple);
     font-family: var(--font-head); font-weight: 700; font-size: 13px;
     cursor: pointer; padding: 0; letter-spacing: 0.04em;
+  }
+
+  /* ================================================================
+     DESIGN SYSTEM PASS — flow, hierarchy, and the red thread
+     A continuous visual path: glitching hero → thread connectors
+     between chapters → ghost chapter numerals → accented headers.
+     ================================================================ */
+
+  ::selection { background: rgba(214,60,47,0.45); color: var(--white); }
+
+  /* Content always paints above ambient glows */
+  .chapter > .container,
+  .chapter > .container--wide { position: relative; z-index: 1; }
+
+  /* -- The red thread: a stitch between every chapter boundary -- */
+  .chapter + .chapter::before {
+    content: ''; position: absolute; left: 50%; top: 0;
+    transform: translate(-50%, -50%);
+    width: 1px; height: 130px; z-index: 1; pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(214,60,47,0.55) 50%, transparent);
+  }
+
+  /* -- Ambient corner glows, alternating sides for a gentle zigzag -- */
+  #ch1::after, #ch3::after, #ch5::after, #ch7::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 55% 38% at 10% 0%, rgba(214,60,47,0.06), transparent 65%);
+  }
+  #ch2::after, #ch4::after, #ch6::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 55% 38% at 90% 0%, rgba(92,63,196,0.07), transparent 65%);
+  }
+
+  /* -- Chapter headers: rule → label → title → accent bar → intro -- */
+  .ch-label {
+    display: inline-flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+  }
+  .ch-label::before {
+    content: ''; width: 34px; height: 1px;
+    background: var(--red); opacity: 0.85;
+  }
+  .ch-title { position: relative; z-index: 0; margin-bottom: 24px; }
+  .ch-title::before {
+    position: absolute; right: 0; top: -0.42em; z-index: -1;
+    font-size: clamp(88px, 15vw, 168px); font-weight: 800; line-height: 1;
+    color: transparent; -webkit-text-stroke: 1.5px rgba(245,242,236,0.06);
+    letter-spacing: -0.02em; pointer-events: none; user-select: none;
+  }
+  #ch1 .ch-title::before { content: '01'; }
+  #ch2 .ch-title::before { content: '02'; }
+  #ch3 .ch-title::before { content: '03'; }
+  #ch4 .ch-title::before { content: '04'; }
+  #ch5 .ch-title::before { content: '05'; }
+  #ch6 .ch-title::before { content: '06'; }
+  #ch7 .ch-title::before { content: '07'; }
+  .ch-title::after {
+    content: ''; display: block; width: 64px; height: 3px;
+    margin-top: 24px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--red), rgba(214,60,47,0.15));
+  }
+  .ch-intro { font-size: 18px; max-width: 620px; margin-bottom: 56px; }
+
+  /* -- Hero refinements -- */
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 14px; }
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: ''; width: 36px; height: 1px; background: rgba(214,60,47,0.5);
+  }
+
+  /* -- Glitch: periodic RGB-split slice burst on the hero word -- */
+  .glitch { position: relative; display: inline-block; animation: glitch-flicker 4.2s infinite; }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute; left: 0; top: 0; width: 100%;
+    color: var(--red); pointer-events: none;
+    clip-path: inset(50% 0 50% 0);
+  }
+  .glitch::before {
+    text-shadow: -3px 0 rgba(59,130,246,0.8);
+    animation: glitch-slice-a 4.2s infinite steps(1);
+  }
+  .glitch::after {
+    text-shadow: 3px 0 rgba(34,211,238,0.7);
+    animation: glitch-slice-b 4.2s 0.1s infinite steps(1);
+  }
+  @keyframes glitch-slice-a {
+    0%, 86% { clip-path: inset(50% 0 50% 0); transform: none; }
+    87% { clip-path: inset(8% 0 64% 0); transform: translate(-7px, -2px); }
+    89% { clip-path: inset(68% 0 6% 0); transform: translate(6px, 1px); }
+    91% { clip-path: inset(32% 0 44% 0); transform: translate(-4px, 2px); }
+    93%, 100% { clip-path: inset(50% 0 50% 0); transform: none; }
+  }
+  @keyframes glitch-slice-b {
+    0%, 86% { clip-path: inset(50% 0 50% 0); transform: none; }
+    88% { clip-path: inset(74% 0 10% 0); transform: translate(7px, 2px); }
+    90% { clip-path: inset(14% 0 58% 0); transform: translate(-6px, -1px); }
+    92% { clip-path: inset(44% 0 30% 0); transform: translate(4px, -2px); }
+    94%, 100% { clip-path: inset(50% 0 50% 0); transform: none; }
+  }
+  @keyframes glitch-flicker {
+    0%, 85%, 94%, 100% { opacity: 1; }
+    88% { opacity: 0.82; }
+    91% { opacity: 0.94; }
+  }
+
+  /* -- Nav dots: labels on hover, active dot becomes a red pill -- */
+  .chapter-dot { position: relative; }
+  .chapter-dot.active {
+    height: 22px; border-radius: 4px; transform: none;
+    background: var(--red); border-color: var(--red);
+  }
+  .chapter-dot::after {
+    content: attr(data-label);
+    position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+    white-space: nowrap; font-family: var(--font-head);
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--white); background: rgba(16,16,16,0.95);
+    border: 1px solid var(--border); padding: 4px 10px; border-radius: 3px;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s;
+  }
+  .chapter-dot:hover::after { opacity: 1; transform: translate(-4px, -50%); }
+
+  /* -- Softer surfaces: one consistent radius language -- */
+  .belief-meter, #reveal-section, .locked-banner, .rerun-box,
+  .facilitator-notes, .build-insight, .mode-tab, .scenario-btn,
+  .build-preview, .quiz-post { border-radius: 8px; }
+  .belief-meter { box-shadow: 0 14px 44px rgba(0,0,0,0.3); }
+  #reveal-section { border-top: 3px solid var(--red); }
+
+  /* -- Motion respect -- */
+  @media (prefers-reduced-motion: reduce) {
+    .glitch, .glitch::before, .glitch::after { animation: none; }
+    .glitch::before, .glitch::after { display: none; }
   }

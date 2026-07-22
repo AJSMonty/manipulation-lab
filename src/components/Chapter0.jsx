@@ -4,7 +4,7 @@ export function Chapter0({ scrollToChapter }) { return (<><section className="ch
     <h1 className="hero-title">
       <span className="hero-title-line">The</span>
       <span className="hero-title-accent">
-        <em>Manipulation</em>
+        <em className="glitch" data-text="Manipulation">Manipulation</em>
       </span>
       <span className="hero-title-line">Lab</span>
     </h1>
