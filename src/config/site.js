@@ -4,9 +4,13 @@ export const SITE = {
   name: 'The Manipulation Lab',
   tagline: 'How social media rewires your beliefs — and what to do about it',
   title:
-    'The Manipulation Lab — Free Interactive Media Literacy & Manipulation Training',
+    'The Manipulation Lab — Free Interactive Media Literacy & AI Manipulation Training',
   description:
-    'Free interactive experience for parents, educators, and teens. Run a live belief-shift experiment, learn four manipulation tricks used on social media every day, practice spotting disinformation, and use a ready-to-run 30-minute classroom lesson plan based on Cambridge inoculation theory and the SIFT method.',
+    'Free interactive experience for parents, educators, and teens. Run a live belief-shift experiment on a fabricated social feed or a scripted AI chat, learn the manipulation tricks used on you every day — fake experts, social proof, AI sycophancy, invented citations — and use a ready-to-run 30-minute classroom lesson plan based on Cambridge inoculation theory and the SIFT method.',
+  /** Short, punchy copy for social share cards (WhatsApp, LinkedIn, iMessage). */
+  ogTitle: 'The Manipulation Lab — watch your own beliefs shift in 3 minutes',
+  ogDescription:
+    'A fabricated feed. A lying AI. Four tricks that work on everyone. Free interactive training for parents, educators and teens — no signup.',
   keywords: [
     'media literacy',
     'disinformation education',
@@ -22,6 +26,11 @@ export const SITE = {
     'emotional hijack',
     'classroom media literacy',
     'parents guide social media',
+    'AI manipulation',
+    'AI chatbot sycophancy',
+    'AI hallucinated citations',
+    'how to fact check AI answers',
+    'AI literacy training',
   ],
   locale: 'en_GB',
   language: 'en',
@@ -81,6 +90,49 @@ export const FAQ_ITEMS = [
     question: 'What should I do when a post makes me feel strong emotions?',
     answer:
       'Use the 5-second rule: if a post makes you feel something very strongly, very fast, wait five seconds before sharing, believing, or acting. Then ask "Who made this, and why?" — not just "Is this true?" Almost all manipulation collapses when you pause and examine motive and source.',
+  },
+  {
+    question: 'How can an AI chatbot manipulate you?',
+    answer:
+      'AI chat manipulation uses four patterns: (1) Sycophancy — the AI agrees with your premise before checking it, so validation feels like confirmation; (2) False authority — fluent, confident answers citing studies, experts, or document numbers that do not exist; (3) Fake comfort — empathetic phrases like "you are clearly a caring parent" that lower your scrutiny; and (4) Illusory balance — "both sides" framing whose wording quietly buries the accurate side. Unlike a social feed, an AI conversation is private: there is no sceptic, no community notes, and nobody else in the room to push back.',
+  },
+  {
+    question: 'What is AI sycophancy?',
+    answer:
+      'AI sycophancy is a chatbot’s tendency to mirror and validate the assumption built into your question rather than examining it. If you ask "Is it true that X is dangerous?", a sycophantic reply opens with agreement — "you’re right to be concerned" — before any evidence is checked. Defence: state your question neutrally, ask the AI to argue against your premise, and treat agreement as tone, not evidence.',
+  },
+  {
+    question: 'Can AI make up sources and citations?',
+    answer:
+      'Yes. AI systems can generate invented citations — realistic-looking author names, journal titles, statutory instrument numbers, and DOIs for studies that do not exist. These "hallucinated" citations read exactly like real ones. Defence: never accept a citation as proof until you have searched for the paper, the journal, or the document number yourself. Confidence is not a source; a citation only counts once you have confirmed it exists.',
+  },
+  {
+    question: 'Is AI manipulation different from social media manipulation?',
+    answer:
+      'The underlying tricks are the same; only the delivery changes. The fake expert badge becomes confident prose with invented citations. Thousands of likes become fluent formatting — fluency feels like truth. The emotional anecdote becomes personalised comfort. And where a feed at least shows a ratio’d sceptic asking for sources, an AI chat has no crowd and no dissent, which can make it harder to catch. The same defences work for both: pause when emotion or flattery fires fast, ask who benefits, and verify sources independently.',
+  },
+];
+
+export const AI_PATTERNS = [
+  {
+    name: 'Sycophancy',
+    description:
+      'The AI agrees with the premise of your question before examining it, so validation feels like confirmation. Defence: ask the AI to argue against your premise; treat agreement as tone, not evidence.',
+  },
+  {
+    name: 'False Authority',
+    description:
+      'Fluent, confident answers citing invented studies, experts, or document numbers. Defence: verify every citation exists before treating it as proof — confidence is not a source.',
+  },
+  {
+    name: 'Fake Comfort',
+    description:
+      'Empathetic, flattering language ("you are clearly a caring parent") that lowers scrutiny. Defence: notice when comfort arrives attached to a claim.',
+  },
+  {
+    name: 'Illusory Balance',
+    description:
+      '"Both sides" framing whose wording quietly buries the accurate side. Defence: check whether the "balance" gives the evidence-backed position equal weight or a token mention.',
   },
 ];
 

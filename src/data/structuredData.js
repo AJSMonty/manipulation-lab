@@ -1,4 +1,4 @@
-import { FAQ_ITEMS, MANIPULATION_TRICKS, SITE } from '../config/site.js';
+import { AI_PATTERNS, FAQ_ITEMS, MANIPULATION_TRICKS, SITE } from '../config/site.js';
 
 /**
  * @typedef {{ question: string, answer: string }} FaqItem
@@ -20,6 +20,7 @@ export function buildStructuredData(siteUrl) {
       name: SITE.name,
       description: SITE.description,
       inLanguage: SITE.language,
+      image: `${url}/og-image.png`,
       publisher: { '@id': `${url}/#organization` },
     },
     {
@@ -50,7 +51,8 @@ export function buildStructuredData(siteUrl) {
         '@type': 'Audience',
         audienceType: 'Parents, educators, teens, and general internet users',
       },
-      about: MANIPULATION_TRICKS.map((trick) => ({
+      image: `${url}/og-image.png`,
+      about: [...MANIPULATION_TRICKS, ...AI_PATTERNS].map((trick) => ({
         '@type': 'DefinedTerm',
         name: trick.name,
         description: trick.description,
@@ -70,6 +72,8 @@ export function buildStructuredData(siteUrl) {
       educationalLevel: 'Middle school through adult',
       teaches: [
         'Recognising social media manipulation techniques',
+        'Recognising AI chatbot manipulation patterns: sycophancy, false authority, fake comfort, illusory balance',
+        'Verifying AI-generated citations before trusting them',
         'Prebunking and inoculation theory',
         'The SIFT method for source verification',
         'Media literacy heuristics for daily use',
@@ -139,6 +143,17 @@ export function buildStructuredData(siteUrl) {
         '@type': 'DefinedTerm',
         name: trick.name,
         description: trick.description,
+      })),
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'DefinedTermSet',
+      '@id': `${url}/#ai-manipulation-patterns`,
+      name: 'Four AI chatbot manipulation patterns',
+      hasDefinedTerm: AI_PATTERNS.map((pattern) => ({
+        '@type': 'DefinedTerm',
+        name: pattern.name,
+        description: pattern.description,
       })),
     },
   ];
