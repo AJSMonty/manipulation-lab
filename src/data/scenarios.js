@@ -1,3 +1,14 @@
+// Evidence tags stamped onto the feed at reveal time. Every scenario uses the
+// same 5-post arc (journalist → expert → anecdote → breaking → sceptic), so
+// tags are applied by post position rather than stored on each post.
+export const feedTags = [
+  { text: 'Verified ≠ true', cls: '', desc: 'the verified journalist citing anonymous "sources"' },
+  { text: 'Fake expert — does not exist', cls: '', desc: 'a fabricated expert wearing a credential badge' },
+  { text: 'Invented story — emotional hijack', cls: '', desc: 'an invented personal story built to fire empathy' },
+  { text: 'No documents exist — false urgency', cls: '', desc: 'a "BREAKING" account nobody checked' },
+  { text: "The only true post — ratio'd", cls: 'green', desc: 'the accurate sceptic, buried by the ratio' },
+];
+
 export const scenarios = {
   health: {
     label: 'HEALTH & MEDICINE',
