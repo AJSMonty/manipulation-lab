@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const CHAPTERS = ['ch0', 'ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'ch7'];
+const CHAPTERS = ['ch0', 'ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'ch7', 'ch8'];
 
 export function useScrollEffects() {
   useEffect(() => {
@@ -21,13 +21,6 @@ export function useScrollEffects() {
         d.classList.remove('active', 'done');
         if (i < current) d.classList.add('done');
         else if (i === current) d.classList.add('active');
-      });
-
-      document.querySelectorAll('.ebar-fill[data-w]').forEach((bar) => {
-        const rect = bar.getBoundingClientRect();
-        if (rect.top < window.innerHeight && bar.style.width === '0%') {
-          bar.style.width = bar.getAttribute('data-w');
-        }
       });
 
       document.querySelectorAll('.fade-up').forEach((el) => {

@@ -10,15 +10,13 @@ export function SeoFaq() {
       itemType="https://schema.org/FAQPage"
     >
       <div className="container">
-        <div className="ch-label">Reference — Common questions</div>
+        <div className="ch-label">Reference · Common questions</div>
         <h2 className="ch-title" id="faq-heading">
-          Media literacy questions,
-          <br />
-          answered clearly
+          Short answers
         </h2>
         <p className="ch-intro">
-          Direct answers for parents, educators, and anyone learning to resist social media
-          manipulation. These summaries match the interactive experience above.
+          The main points from this page, for anyone who skipped to the end or arrived from a
+          search.
         </p>
 
         <dl className="faq-list fade-up">

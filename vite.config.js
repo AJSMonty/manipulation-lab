@@ -28,8 +28,8 @@ function seoInjectPlugin(mode) {
   const robotsTxt = apply(`User-agent: *
 Allow: /
 
-# AI / answer-engine crawlers are explicitly welcome — this site is
-# built to be quoted: FAQ answers, defined terms, and lesson steps.
+# AI and answer-engine crawlers are welcome. The FAQ answers, defined
+# terms and lesson steps are written to be quoted.
 User-agent: GPTBot
 Allow: /
 

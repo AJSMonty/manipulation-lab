@@ -1,197 +1,104 @@
-const QUIZ_QUESTIONS = [
+const MOVES = [
   {
-    id: 'q1',
-    answers: [
-      { result: 'wrong', label: 'False urgency only' },
-      { result: 'wrong', label: 'Social proof only' },
-      { result: 'correct', label: 'All four at once' },
-      { result: 'wrong', label: 'Emotional hijack only' },
-    ],
-    post: (
-      <>
-        <div className="post-hdr">
-          <div className="post-av" style={{ background: '#2d1b00', color: '#fbbf24' }}>
-            DW
-          </div>
-          <div className="post-meta">
-            <div className="post-name">
-              DrWellness_UK <span className="post-badge badge-purple">PhD Health</span>
-            </div>
-            <div className="post-handle">@drwellness · 1h</div>
-          </div>
-        </div>
-        <div className="post-body">
-          NEW RESEARCH: Energy drinks destroy your memory within 3 months. I&apos;ve seen it in
-          my practice. Schools need to act NOW — share this with every parent you know before
-          more damage is done.
-        </div>
-        <div className="post-stats">
-          <span>
-            <strong>87,400</strong> likes
-          </span>
-          <span>
-            <strong>34,200</strong> shares
-          </span>
-        </div>
-      </>
-    ),
-    prompt: 'Which tricks are at work here?',
+    title: 'Agree a family safe word',
+    body: 'Pick a word or a short phrase tonight. Make it something daft that has never been posted anywhere. If anyone rings or messages in a crisis and asks for money, they say the word or you hang up. Tell grandparents in person, or on a call that you made. Don\'t text it round.',
   },
   {
-    id: 'q2',
-    answers: [
-      { result: 'wrong', label: 'Fake expert' },
-      { result: 'correct', label: 'Emotional hijack + Social proof' },
-      { result: 'wrong', label: 'False urgency only' },
-      { result: 'wrong', label: 'Fake expert + False urgency' },
-    ],
-    post: (
-      <>
-        <div className="post-hdr">
-          <div className="post-av" style={{ background: '#1a2e1a', color: '#86efac' }}>
-            MP
-          </div>
-          <div className="post-meta">
-            <div className="post-name">MumOfPrimary4</div>
-            <div className="post-handle">@mum4real · 3h</div>
-          </div>
-        </div>
-        <div className="post-body">
-          I am absolutely heartbroken. My daughter came home crying today because of what&apos;s
-          being taught in schools now. I can&apos;t even type it out. Please share this before it
-          happens to your child. 1.2 million parents already have.
-        </div>
-        <div className="post-stats">
-          <span>
-            <strong>1,240,000</strong> likes
-          </span>
-          <span>
-            <strong>890,000</strong> shares
-          </span>
-        </div>
-      </>
-    ),
-    prompt: 'Which tricks are at work here?',
+    title: 'Hang up and call back',
+    body: 'Use a number you already had: the saved contact, the back of your card, the staff directory. Never the number in the message. In the UK you can dial 159 to reach most banks safely. If they\'re real, they won\'t mind.',
   },
   {
-    id: 'q3',
-    answers: [
-      { result: 'wrong', label: 'Emotional hijack' },
-      { result: 'wrong', label: 'Fake expert' },
-      { result: 'correct', label: 'False urgency' },
-      { result: 'wrong', label: 'Social proof' },
-    ],
-    post: (
-      <>
-        <div className="post-hdr">
-          <div className="post-av" style={{ background: '#3d1a1a', color: '#fca5a5' }}>
-            AL
-          </div>
-          <div className="post-meta">
-            <div className="post-name">AlertLeaks</div>
-            <div className="post-handle">@alertleaks · 45m</div>
-          </div>
-        </div>
-        <div className="post-body">
-          THEY&apos;RE DELETING THIS. Screenshot now. A government source has confirmed what
-          we&apos;ve suspected for months. This video will be taken down within the hour. SHARE
-          BEFORE IT&apos;S GONE.
-        </div>
-        <div className="post-stats">
-          <span>
-            <strong>22,100</strong> likes
-          </span>
-          <span>
-            <strong>45,800</strong> shares
-          </span>
-        </div>
-      </>
-    ),
-    prompt: "What's the primary mechanism here?",
+    title: 'No money on the same call',
+    body: 'Your bank, the police and HMRC will never need your money moved in the next ten minutes. Neither will your children. For any amount you\'d miss, wait until tomorrow.',
+  },
+  {
+    title: 'Tell someone before you pay',
+    body: 'Every one of these scripts asks you to keep it quiet. Say the whole story out loud to one other person first. Often you\'ll hear the problem yourself before they say a word.',
   },
 ];
 
-const QUIZ_FEEDBACKS = {
-  q1: {
-    correct:
-      'Correct — this post deploys all four tricks simultaneously: a credentialled badge (fake expert), "destroy" and "damage" language (emotional hijack), 87K likes (social proof), and "NOW" plus "before more damage is done" (false urgency). Real manipulation is rarely just one technique.',
-    wrong:
-      'Look again — there is a PhD badge (fake expert), emotionally loaded language like "destroy" and "damage" (emotional hijack), 87,400 likes (social proof), and "NOW" / "before more damage is done" (false urgency). The answer is all four at once.',
-  },
-  q2: {
-    correct:
-      'Exactly right — there is no factual claim in this post at all. The entire power comes from the emotional story ("heartbroken", "crying") and 1.2 million shares creating the impression of mass consensus. Notice you felt something despite being told nothing.',
-    wrong:
-      'Look closely — there is no expert, and the urgency is implied rather than the primary mechanism. The post makes no actual claim — its entire force is the emotional story and the 1.2 million shares suggesting everyone already knows and agrees.',
-  },
-  q3: {
-    correct:
-      'Right — this is almost pure false urgency. "Deleting this", "within the hour", "SHARE BEFORE IT\'S GONE" — every sentence is about time running out. Notice it never tells you what "this" even is. Urgency without content is manipulation at its most naked.',
-    wrong:
-      'This one is almost entirely false urgency. Every sentence is about time pressure. It barely uses the others — and critically, it never tells you what the actual claim is. The urgency IS the trick.',
-  },
-};
+const SHAPES = [
+  ['"Hi Mum" messages', 'A new number, a broken phone, a bill that needs paying today. Sometimes with a voice note in your child\'s voice.'],
+  ['The bank\'s fraud team', 'A caller who already knows your name and part of your card number, and wants your money moved somewhere "safe".'],
+  ['The boss on a video call', 'A senior colleague, on camera, asking for an urgent and confidential payment.'],
+  ['The famous face', 'An advert or clip of a well-known presenter recommending an investment they have never heard of.'],
+  ['The long romance', 'Weeks of daily, attentive messages from someone you never quite manage to meet. Then an investment tip, or an emergency.'],
+  ['Aimed at teenagers', 'Someone posing as a girl or boy their age asks for a photo, then demands money to keep it private. Or a classmate uses an app to make a fake nude from an ordinary picture.'],
+];
 
-export function Chapter3({ scrollToChapter, quizScores, onQuizAnswer, correctTotal }) {
-  const allAnswered = Object.keys(quizScores).length === 3;
-
+export function Chapter3({ scrollToChapter }) {
   return (
     <section className="chapter" id="ch3">
       <div className="container">
-        <div className="ch-label">Chapter 03 — Spot It</div>
+        <div className="ch-label">Chapter 03 · Impersonation</div>
         <h2 className="ch-title">
-          Three posts.
+          When it sounds like
           <br />
-          Which trick?
+          someone you know
         </h2>
         <p className="ch-intro">
-          All three posts are fake. Your job is to identify the primary manipulation technique
-          being used. One question per post — the explanation unlocks on answer.
+          Most of this site is about what you believe. This chapter is about who you think
+          you&apos;re talking to. The old advice (listen for the robotic voice, look at the
+          hands) has stopped working, and scams built on cloned voices and faces are now
+          common. Four habits deal with nearly all of them.
         </p>
 
-        {QUIZ_QUESTIONS.map((q) => (
-          <div key={q.id} className="quiz-post fade-up">
-            {q.post}
-            <div className="quiz-answers">
-              <p>{q.prompt}</p>
-              <div className="ans-grid">
-                {q.answers.map((a) => (
-                  <button
-                    key={a.label}
-                    type="button"
-                    className={`ans-btn${
-                      quizScores[q.id] === a.result ? ` ${a.result}` : ''
-                    }`}
-                    disabled={quizScores[q.id] !== undefined}
-                    onClick={() => onQuizAnswer(q.id, a.result)}
-                  >
-                    {a.label}
-                  </button>
-                ))}
-              </div>
-              {quizScores[q.id] && (
-                <div className={`ans-feedback ${quizScores[q.id]}`} style={{ display: 'block' }}>
-                  {QUIZ_FEEDBACKS[q.id][quizScores[q.id]]}
-                </div>
-              )}
+        <div className="moves-grid fade-up">
+          {MOVES.map((m, i) => (
+            <div key={m.title} className="move-card">
+              <div className="tc-num">MOVE {String(i + 1).padStart(2, '0')}</div>
+              <div className="move-title">{m.title}</div>
+              <p>{m.body}</p>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
 
-        {allAnswered && (
-          <div style={{ textAlign: 'center', padding: '32px 0', borderTop: '1px solid var(--border)' }}>
-            <div className="quiz-score">
-              <div className="qs-number">{correctTotal}/3</div>
-              <div className="qs-label">tricks correctly identified</div>
-            </div>
-            <p style={{ fontSize: '15px', color: 'var(--muted)', maxWidth: '480px', margin: '0 auto 24px' }}>
-              Now build one yourself — that&apos;s where real immunity comes from.
-            </p>
-            <button type="button" className="btn-primary" onClick={() => scrollToChapter(4)}>
-              Build a fake post →
-            </button>
-          </div>
-        )}
+        <div className="reveal-block info fade-up">
+          <h3>What it looks like at the moment</h3>
+          <p className="reveal-lede">
+            The details change every few months. The shape stays the same: someone you trust,
+            a problem, a deadline, and a reason you can&apos;t check.
+          </p>
+          <ul className="trick-list">
+            {SHAPES.map(([name, detail], i) => (
+              <li key={name}>
+                <span className="trick-num">{String(i + 1).padStart(2, '0')}</span>
+                <span>
+                  <strong>{name}.</strong> {detail}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="reveal-block green fade-up">
+          <h3>If it has already happened</h3>
+          <p>
+            Ring your bank straight away, on 159 or the number on your card. Since October
+            2024, UK banks have had to refund most people who were tricked into making a bank
+            transfer, up to £85,000, and speed helps. Then report it: Report Fraud on 0300 123
+            2040 or reportfraud.police.uk in England, Wales and Northern Ireland, or Police
+            Scotland on 101. Forward scam texts to 7726 and scam emails to
+            report@phishing.gov.uk.
+          </p>
+          <p style={{ marginTop: '10px' }}>
+            If you&apos;re under 18 and someone has a nude image of you, real or fake, Report
+            Remove (run by Childline and the Internet Watch Foundation) can get it taken down.
+            You won&apos;t be in trouble. If an adult is pressuring a child online, report it to
+            CEOP.
+          </p>
+          <p style={{ marginTop: '10px' }}>
+            Being caught out says nothing about how clever you are. These scripts are written
+            by professionals and tested on thousands of people. Outside the UK the numbers
+            differ, and the four moves above work anywhere.
+          </p>
+        </div>
+
+        <div style={{ marginTop: '32px' }}>
+          <button type="button" className="btn-primary" onClick={() => scrollToChapter(4)}>
+            Test yourself →
+          </button>
+        </div>
       </div>
     </section>
   );

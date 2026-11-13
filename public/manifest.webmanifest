@@ -1,7 +1,7 @@
 {
   "name": "The Manipulation Lab",
   "short_name": "Manip Lab",
-  "description": "Free interactive media literacy training — learn how social media manipulation works and how to resist it.",
+  "description": "Free interactive training on how feeds, chatbots and fake calls change your mind, and what to do about it.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0a",

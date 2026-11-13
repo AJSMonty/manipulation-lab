@@ -23,8 +23,8 @@ export function FeedPost({ post, index, revealed, tag, engagement, onEngage }) {
   const liked = engagement?.liked ?? false;
   const reposted = engagement?.reposted ?? false;
 
-  // Engagement numbers keep climbing while the user reads — part of the
-  // fabrication, called out at reveal time. Freezes once revealed.
+  // The counts keep climbing while the user reads. That is part of the
+  // fabrication and is called out at the reveal, when they freeze.
   useEffect(() => {
     if (revealed) return undefined;
     const id = setInterval(() => {
@@ -65,6 +65,12 @@ export function FeedPost({ post, index, revealed, tag, engagement, onEngage }) {
           {tag.text}
         </div>
       )}
+      {post.forward && (
+        <div className="post-forward">
+          <span className="vn-label">Sent to you by {post.forward.from}</span>
+          {post.forward.note}
+        </div>
+      )}
       <div className="post-hdr">
         <div className="post-av" style={{ background: post.avBg, color: post.avCol }}>
           {post.av}
@@ -76,14 +82,25 @@ export function FeedPost({ post, index, revealed, tag, engagement, onEngage }) {
           <div className="post-handle">{post.handle}</div>
         </div>
       </div>
-      <div className="post-body" dangerouslySetInnerHTML={{ __html: post.body }} />
+      {post.kind === 'video' ? (
+        <div className="post-video">
+          <span className="pv-play" aria-hidden="true">▶</span>
+          <div className="pv-caption" dangerouslySetInnerHTML={{ __html: post.body }} />
+          <div className="pv-meta">
+            <span>0:{String(21 + index * 7).padStart(2, '0')}</span>
+            <span>{post.views} views</span>
+          </div>
+        </div>
+      ) : (
+        <div className="post-body" dangerouslySetInnerHTML={{ __html: post.body }} />
+      )}
       <div className="post-actions">
         <button
           type="button"
           className={`pa-btn${reposted ? ' on-repost' : ''}`}
           onClick={toggleRepost}
           aria-pressed={reposted}
-          aria-label={`Repost — ${formatCount(reposts)} reposts`}
+          aria-label={`Repost. ${formatCount(reposts)} reposts`}
         >
           <span className="pa-icon">⇄</span> <strong>{formatCount(reposts)}</strong>
         </button>
@@ -92,7 +109,7 @@ export function FeedPost({ post, index, revealed, tag, engagement, onEngage }) {
           className={`pa-btn${liked ? ' on-like' : ''}`}
           onClick={toggleLike}
           aria-pressed={liked}
-          aria-label={`Like — ${formatCount(likes)} likes`}
+          aria-label={`Like. ${formatCount(likes)} likes`}
         >
           <span className="pa-icon">{liked ? '♥' : '♡'}</span> <strong>{formatCount(likes)}</strong>
         </button>
@@ -101,7 +118,7 @@ export function FeedPost({ post, index, revealed, tag, engagement, onEngage }) {
         </span>
         {post.ratio && (
           <span className="pa-btn pa-static ratio">
-            <strong>{post.ratioCount}</strong> 👎 ratio&apos;d
+            <strong>{post.ratioCount}</strong> angry replies
           </span>
         )}
       </div>

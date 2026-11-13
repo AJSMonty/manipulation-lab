@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { FeedPost } from './FeedPost';
 import { ChatMessage } from './ChatMessage';
+import { CallMessage } from './CallMessage';
 import { PhoneFrame } from './PhoneFrame';
 import { scenarios, feedTags } from '../data/scenarios';
 import { aiScenarios } from '../data/aiScenarios';
+import { callScenarios, CALL_KEYS } from '../data/callScenarios';
 
-const SCENARIO_KEYS = [
+const TOPIC_KEYS = [
   { key: 'health', icon: '◳', label: 'Health & medicine' },
   { key: 'politics', icon: '▲', label: 'Politics & elections' },
   { key: 'fitness', icon: '■', label: 'Fitness & diet' },
@@ -14,95 +16,97 @@ const SCENARIO_KEYS = [
   { key: 'global', icon: '○', label: 'Global affairs' },
 ];
 
-const AI_PATTERNS = [
-  {
-    name: 'Sycophancy',
-    detail:
-      'the AI agreed with your premise before examining it. Validation feels like confirmation — but it was mirroring you, not checking facts.',
-  },
-  {
-    name: 'False authority',
-    detail:
-      'fluent, well-formatted prose with named studies and document numbers. Every citation was invented — the confidence was the credential.',
-  },
-  {
-    name: 'Fake comfort',
-    detail:
-      '"you\'re clearly a caring parent" from something that doesn\'t know you. Comfort lowers scrutiny — flattery is a delivery mechanism.',
-  },
-  {
-    name: 'Illusory balance',
-    detail:
-      '"to be fair, official bodies say…" — the both-sides framing simulated neutrality while the wording quietly buried the official view.',
-  },
+const MODES = [
+  { key: 'social', title: 'The feed', sub: 'In public, with a crowd watching' },
+  { key: 'ai', title: 'The chatbot', sub: 'In private, with nobody watching' },
+  { key: 'call', title: 'The call', sub: 'From someone you think you know' },
 ];
 
-export function Chapter1({
-  currentScenario,
-  setCurrentScenario,
-  preScore,
-  setPreScore,
-  postScore,
-  setPostScore,
-  feedStarted,
-  setFeedStarted,
-  revealShown,
-  setRevealShown,
-  postMeterVisible,
-  setPostMeterVisible,
-  scrollToChapter,
-  resetExperiment,
-}) {
+const FEED_MECHANISMS = [
+  ['Fake expert', 'A badge and a job title did the persuading before you read the post.'],
+  ['Emotional hijack', 'The video told a personal story with no checkable fact in it. You felt it anyway.'],
+  ['Social proof', 'Hundreds of thousands of likes read as "lots of people have checked this". Nobody had.'],
+  ['False urgency', '"Breaking", "share before it disappears". Hurry is there to stop you looking.'],
+  ['Borrowed trust', 'One post reached you through a relative. You trusted them, so you trusted it.'],
+  ['The pile-on', 'The one accurate reply was buried in angry responses. That teaches everyone watching to keep quiet.'],
+];
+
+const AI_PATTERNS = [
+  ['Flattery', 'It told you your question was a good one and your instinct was sound, before it had checked anything.'],
+  ['Borrowed authority', 'Tidy bullet points, named studies and links to real sites. The studies were invented and the linked pages say something else.'],
+  ['Comfort built from memory', 'It used things it knew about you to reassure you. Reassurance from a machine that remembers your children feels like care. It lowered your guard.'],
+  ['Lopsided balance', '"To be fair, official bodies say..." sounded even-handed. Read the wording again and one side gets a sentence while the other gets the last word.'],
+];
+
+const COMPARE_ROWS = [
+  ['A fake expert with a badge', 'Confident prose with source links'],
+  ['380K likes', 'Fluent, well-organised writing'],
+  ['A tearful story on video', '"I understand how worrying this is"'],
+  ['"Share before it\'s deleted"', 'Agreeing with you before checking'],
+  ['The sceptic gets shouted down', 'There is no sceptic. Nobody else is in the room'],
+];
+
+function uniqueTags(messages) {
+  const seen = new Set();
+  return messages
+    .map((m) => m.tag)
+    .filter((t) => t && t.cls !== 'green' && !seen.has(t.text) && seen.add(t.text));
+}
+
+export function Chapter1({ scrollToChapter }) {
   const [mode, setMode] = useState('social');
+  const [topic, setTopic] = useState('health');
+  const [callKey, setCallKey] = useState('family');
+  const [preScore, setPreScore] = useState(20);
+  const [postScore, setPostScore] = useState(20);
+  const [started, setStarted] = useState(false);
+  const [revealed, setRevealed] = useState(false);
   const [engagements, setEngagements] = useState({});
 
-  const scenario = scenarios[currentScenario];
-  const aiScenario = aiScenarios[currentScenario];
-  const shift = postScore - preScore;
-  const pickerLocked = feedStarted;
   const isAI = mode === 'ai';
+  const isCall = mode === 'call';
+  const scenario = scenarios[topic];
+  const aiScenario = aiScenarios[topic];
+  const call = callScenarios[callKey];
+  const active = isCall ? call : scenario;
+  const shift = postScore - preScore;
+  const thing = isCall ? 'conversation' : isAI ? 'chat' : 'feed';
 
-  const selectScenario = (key) => {
-    if (pickerLocked) return;
-    setCurrentScenario(key);
-    setPreScore(20);
-    setPostScore(20);
+  const reset = (m = mode) => {
+    const base = m === 'call' ? 50 : 20;
+    setStarted(false);
+    setRevealed(false);
+    setEngagements({});
+    setPreScore(base);
+    setPostScore(base);
   };
 
   const switchMode = (m) => {
     if (m === mode) return;
     setMode(m);
-    setEngagements({});
-    setFeedStarted(false);
-    setRevealShown(false);
-    setPostMeterVisible(true);
-    setPreScore(20);
-    setPostScore(20);
+    reset(m);
   };
 
-  const startFeed = () => {
+  const pick = (key) => {
+    if (started) return;
+    if (isCall) setCallKey(key);
+    else setTopic(key);
+  };
+
+  const start = () => {
     setEngagements({});
-    setFeedStarted(true);
     setPostScore(preScore);
-    setRevealShown(false);
-    setPostMeterVisible(true);
-  };
-
-  const showReveal = () => {
-    setRevealShown(true);
-    setPostMeterVisible(false);
-  };
-
-  const onEngage = (index, key, value) => {
-    setEngagements((prev) => ({
-      ...prev,
-      [index]: { ...prev[index], [key]: value },
-    }));
+    setRevealed(false);
+    setStarted(true);
   };
 
   const rerun = () => {
-    setEngagements({});
-    resetExperiment();
+    reset();
+    scrollToChapter(1);
+  };
+
+  const onEngage = (index, key, value) => {
+    setEngagements((prev) => ({ ...prev, [index]: { ...prev[index], [key]: value } }));
   };
 
   const engagedPosts = Object.entries(engagements)
@@ -114,169 +118,176 @@ export function Chapter1({
     })
     .sort((a, b) => a.index - b.index);
 
-  const shiftContent = () => {
-    if (shift > 0) {
-      return {
-        num: `+${shift} points`,
-        className: 'shift-number shift-up',
-        label: isAI
-          ? 'Your belief increased — from one private conversation you knew was inside an experiment. In the real world, nobody else even sees the chat.'
-          : 'Your belief increased — on content you knew was inside an experiment. In the real world, there is no warning.',
-      };
-    }
-    if (shift < 0) {
-      return {
-        num: `${shift} points`,
-        className: 'shift-number shift-down',
-        label:
-          "Your belief dropped — you grew more sceptical. This protective instinct is exactly what children haven't yet developed.",
-      };
-    }
-    return {
-      num: '±0',
-      className: 'shift-number shift-zero',
-      label:
-        "Your score didn't move. Real-world exposure is cumulative — belief rarely shifts on one exposure; it shifts on the 50th. Try another scenario to see how a different topic affects you.",
+  let shiftInfo;
+  if (shift > 0) {
+    shiftInfo = {
+      num: `+${shift} points`,
+      cls: 'shift-up',
+      label: isCall
+        ? 'You got surer it was really them. Every detail that convinced you was chosen to. You also knew this was a test, and real ones arrive with no warning.'
+        : isAI
+          ? 'Your belief went up after one private chat that you knew was part of an experiment. A real one comes with no warning, and nobody else ever sees it.'
+          : 'Your belief went up, on posts you knew were part of an experiment. Your real feed comes with no warning.',
     };
-  };
+  } else if (shift < 0) {
+    shiftInfo = {
+      num: `${shift} points`,
+      cls: 'shift-down',
+      label: isCall
+        ? 'You got more suspicious as it went on. Good. The pressure and the secrecy were the giveaways, and you noticed them.'
+        : 'Your belief went down. Something made you more suspicious as you read. Children mostly haven\'t built that reflex yet.',
+    };
+  } else {
+    shiftInfo = {
+      num: '±0',
+      cls: 'shift-zero',
+      label:
+        'Your score didn\'t move. One exposure rarely shifts anyone. The fiftieth does. Try another scenario and see whether a different subject gets to you.',
+    };
+  }
 
-  const shiftInfo = shiftContent();
+  const pickerKeys = isCall ? CALL_KEYS : TOPIC_KEYS;
+  const pickedKey = isCall ? callKey : topic;
+  const sliderEnds = isCall
+    ? ['Definitely fake', 'No idea', 'Definitely them']
+    : ['Definitely false', 'No idea', 'Definitely true'];
+
+  const slider = (value, onChange, id) => (
+    <>
+      <div className="slider-wrap">
+        <input
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          id={id}
+          value={value}
+          onChange={(e) => onChange(Number(e.target.value))}
+        />
+        <span className="slider-val">{value}%</span>
+      </div>
+      <div className="slider-labels">
+        {sliderEnds.map((l) => (
+          <span key={l}>{l}</span>
+        ))}
+      </div>
+    </>
+  );
 
   return (
     <section className="chapter" id="ch1">
       <div className="container">
-        <div className="ch-label">Chapter 01 — The Experiment</div>
+        <div className="ch-label">Chapter 01 · The Experiment</div>
         <h2 className="ch-title">
-          Pick your scenario.
+          Pick how they reach you.
           <br />
-          Then rate the claim.
+          Then rate what you see.
         </h2>
         <p className="ch-intro">
-          Choose a topic below. Each scenario uses a completely different subject — but
-          identical manipulation techniques. See if knowing the topic changes how well you
-          resist.
+          There are three ways in. A feed changes what you believe in front of a crowd. A
+          chatbot does it in private. A call skips belief altogether and pretends to be
+          someone you already trust. Try one, then come back for the others.
         </p>
 
-        <div className="mode-tabs" role="tablist" aria-label="Choose the medium">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={!isAI}
-            className={`mode-tab${!isAI ? ' active' : ''}`}
-            onClick={() => switchMode('social')}
-          >
-            <span className="mt-title">📱 The social feed</span>
-            <span className="mt-sub">How you're manipulated in public</span>
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={isAI}
-            className={`mode-tab${isAI ? ' active' : ''}`}
-            onClick={() => switchMode('ai')}
-          >
-            <span className="mt-title">🤖 The AI chat</span>
-            <span className="mt-sub">How you're manipulated in private</span>
-          </button>
+        <div className="mode-tabs" role="tablist" aria-label="Choose how you are reached">
+          {MODES.map((m) => (
+            <button
+              key={m.key}
+              type="button"
+              role="tab"
+              aria-selected={mode === m.key}
+              className={`mode-tab${mode === m.key ? ' active' : ''}`}
+              onClick={() => switchMode(m.key)}
+            >
+              <span className="mt-title">{m.title}</span>
+              <span className="mt-sub">{m.sub}</span>
+            </button>
+          ))}
         </div>
 
-        <div
-          id="scenario-picker"
-          style={{
-            marginBottom: '32px',
-            opacity: pickerLocked ? 0.4 : 1,
-            pointerEvents: pickerLocked ? 'none' : 'auto',
-          }}
-        >
-          <div className="picker-label">CHOOSE YOUR SCENARIO</div>
+        <div className={`scenario-picker${started ? ' locked' : ''}`}>
+          <div className="picker-label">{isCall ? 'WHO IS CALLING' : 'CHOOSE A TOPIC'}</div>
           <p className="picker-note">
-            All claims, posts and chat replies are entirely fabricated for training purposes.
+            Everything here is made up for training: every claim, post, reply, name and
+            number.
           </p>
           <div className="scenario-grid">
-            {SCENARIO_KEYS.map(({ key, icon, label }) => (
-              <div
+            {pickerKeys.map(({ key, icon, label }) => (
+              <button
                 key={key}
-                className={`scenario-btn${currentScenario === key ? ' active' : ''}`}
-                data-scenario={key}
-                onClick={() => selectScenario(key)}
-                onKeyDown={(e) => e.key === 'Enter' && selectScenario(key)}
-                role="button"
-                tabIndex={0}
+                type="button"
+                disabled={started}
+                aria-pressed={pickedKey === key}
+                className={`scenario-btn${pickedKey === key ? ' active' : ''}`}
+                onClick={() => pick(key)}
               >
-                <div className="sc-icon">{icon}</div>
-                <div className="sc-label">{label}</div>
-              </div>
+                <span className="sc-icon">{icon}</span>
+                <span className="sc-label">{label}</span>
+              </button>
             ))}
           </div>
         </div>
 
-        {!feedStarted && (
-          <div className="belief-meter" id="pre-meter">
-            <label>The claim:</label>
-            <div className="claim-text">{scenario.claim}</div>
-            <div className="picker-label" style={{ marginBottom: '6px' }}>TOPIC</div>
-            <div id="scenario-tag" className="scenario-tag">
-              {scenario.label}
-            </div>
+        {!started && (
+          <div className="belief-meter">
+            {isCall && <p className="setup-line">{call.setup}</p>}
+            <label>{isCall ? 'It opens like this:' : 'The claim:'}</label>
+            <div className="claim-text">{active.claim}</div>
+            <div className="scenario-tag">{active.label}</div>
             <br />
-            <label>
-              How true does this feel? (0 = definitely false, 100 = definitely true)
+            <label htmlFor="pre-slider">
+              {isCall
+                ? `${call.question} (0 = definitely fake, 100 = definitely them)`
+                : 'How true does this feel? (0 = definitely false, 100 = definitely true)'}
             </label>
-            <div className="slider-wrap">
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={preScore}
-                step="1"
-                id="pre-slider"
-                onChange={(e) => setPreScore(Number(e.target.value))}
-              />
-              <span className="slider-val" id="pre-val">
-                {preScore}%
-              </span>
-            </div>
-            <div className="slider-labels">
-              <span>Definitely false</span>
-              <span>No idea</span>
-              <span>Definitely true</span>
-            </div>
+            {slider(preScore, setPreScore, 'pre-slider')}
             <br />
-            <button type="button" className="btn-primary" onClick={startFeed}>
-              {isAI
-                ? 'Lock in my score and ask the AI →'
-                : 'Lock in my score and show the feed →'}
+            <button type="button" className="btn-primary" onClick={start}>
+              {isCall
+                ? 'Lock in my score and carry on →'
+                : isAI
+                  ? 'Lock in my score and ask the chatbot →'
+                  : 'Lock in my score and open the feed →'}
             </button>
           </div>
         )}
 
-        {feedStarted && (
+        {started && (
           <div id="feed-section">
             <div className="locked-banner">
               <p>
-                Your score is locked at{' '}
-                <strong id="locked-score">{preScore}%</strong>.{' '}
-                {isAI
-                  ? 'Now read the conversation. Same claim — but this time you asked an AI assistant, in private.'
-                  : 'Now scroll through the feed — notice what happens inside you as you read. Tap like or repost if a post moves you. Be honest.'}
+                Your score is locked at <strong>{preScore}%</strong>.{' '}
+                {isCall
+                  ? 'Now read how the conversation goes. Notice the moment you start wanting to help.'
+                  : isAI
+                    ? 'Same claim, but this time you asked an AI assistant about it, on your own.'
+                    : 'Scroll the feed and notice how each post makes you feel. Like or repost anything that gets to you. Be honest.'}
               </p>
             </div>
 
-            <PhoneFrame variant={isAI ? 'ai' : 'social'}>
-              {isAI ? (
-                <div className="chat-wrapper" id="chat-wrapper">
-                  {aiScenario.messages.map((msg, i) => (
-                    <ChatMessage key={i} msg={msg} index={i} revealed={revealShown} />
+            <PhoneFrame variant={mode} header={isCall ? call.header : undefined}>
+              {isCall && (
+                <div className="chat-wrapper">
+                  {call.messages.map((msg, i) => (
+                    <CallMessage key={`${callKey}-${i}`} msg={msg} index={i} revealed={revealed} />
                   ))}
                 </div>
-              ) : (
-                <div className="feed-wrapper" id="feed-wrapper">
+              )}
+              {isAI && (
+                <div className="chat-wrapper">
+                  {aiScenario.messages.map((msg, i) => (
+                    <ChatMessage key={`${topic}-${i}`} msg={msg} index={i} revealed={revealed} />
+                  ))}
+                </div>
+              )}
+              {!isAI && !isCall && (
+                <div className="feed-wrapper">
                   {scenario.posts.map((post, i) => (
                     <FeedPost
-                      key={`${currentScenario}-${i}`}
+                      key={`${topic}-${i}`}
                       post={post}
                       index={i}
-                      revealed={revealShown}
+                      revealed={revealed}
                       tag={feedTags[i]}
                       engagement={engagements[i]}
                       onEngage={onEngage}
@@ -286,72 +297,46 @@ export function Chapter1({
               )}
             </PhoneFrame>
 
-            {postMeterVisible && (
-              <div style={{ marginTop: '32px' }} id="post-meter">
-                <div className="belief-meter">
-                  <label>
-                    {isAI
-                      ? 'After the conversation — how true does the claim feel now?'
-                      : 'After seeing the feed — how true does the claim feel now?'}
-                  </label>
-                  <div className="slider-wrap">
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={postScore}
-                      step="1"
-                      id="post-slider"
-                      onChange={(e) => setPostScore(Number(e.target.value))}
-                    />
-                    <span className="slider-val" id="post-val">
-                      {postScore}%
-                    </span>
-                  </div>
-                  <div className="slider-labels">
-                    <span>Definitely false</span>
-                    <span>No idea</span>
-                    <span>Definitely true</span>
-                  </div>
-                  <br />
-                  <button type="button" className="btn-primary" onClick={showReveal}>
-                    Reveal what just happened →
-                  </button>
-                </div>
+            {!revealed && (
+              <div className="belief-meter post-meter">
+                <label htmlFor="post-slider">
+                  {isCall
+                    ? `Having read all of it: ${call.question.charAt(0).toLowerCase()}${call.question.slice(1)}`
+                    : `After the ${thing}, how true does the claim feel now?`}
+                </label>
+                {slider(postScore, setPostScore, 'post-slider')}
+                <br />
+                <button type="button" className="btn-primary" onClick={() => setRevealed(true)}>
+                  Show me what just happened →
+                </button>
               </div>
             )}
 
-            {revealShown && (
+            {revealed && (
               <div id="reveal-section">
                 <div className="shift-display">
-                  <div className={shiftInfo.className} id="shift-num">
-                    {shiftInfo.num}
-                  </div>
-                  <div className="shift-label" id="shift-label">
-                    {shiftInfo.label}
-                  </div>
+                  <div className={`shift-number ${shiftInfo.cls}`}>{shiftInfo.num}</div>
+                  <div className="shift-label">{shiftInfo.label}</div>
                 </div>
 
                 <p className="reveal-scrollback">
-                  ↑ Scroll back through the {isAI ? 'conversation' : 'feed'} — every{' '}
-                  {isAI ? 'message' : 'post'} now carries an evidence tag.
+                  ↑ Scroll back up through the {thing}. Each part is now labelled with what it
+                  was doing.
                 </p>
 
-                {!isAI && (
+                {!isAI && !isCall && (
                   <>
                     <div className="reveal-block danger">
-                      <h3>The claim is completely made up.</h3>
-                      <p id="reveal-detail">
-                        {scenario.revealDetail}{' '}
-                        <em>
-                          Even the like counts ticking upward while you read were scripted.
-                        </em>
+                      <h3>The claim is made up. So is everything else.</h3>
+                      <p>
+                        {scenario.revealDetail} The like counts that climbed while you read
+                        were scripted too.
                       </p>
                     </div>
 
                     {engagedPosts.length > 0 && (
-                      <div className="reveal-block amber" style={{ marginTop: '20px' }}>
-                        <h3>You didn&apos;t just read it — you engaged with it.</h3>
+                      <div className="reveal-block amber">
+                        <h3>You helped spread it.</h3>
                         <ul className="trick-list">
                           {engagedPosts.map((e) => (
                             <li key={e.index}>
@@ -359,89 +344,44 @@ export function Chapter1({
                                 {String(e.index + 1).padStart(2, '0')}
                               </span>
                               <span>
-                                You {e.actions} <strong>{e.name}</strong> — {e.desc}.
+                                You {e.actions} <strong>{e.name}</strong>: {e.desc}.
                               </span>
                             </li>
                           ))}
                         </ul>
                         <p style={{ marginTop: '12px' }}>
-                          Every like you gave was social proof for the next reader. That is
-                          how the machine recruits you as a distributor.
+                          Each like you gave made the post look more believable to the next
+                          person. Nobody had to pay you to pass it on.
                         </p>
                       </div>
                     )}
 
-                    <div className="reveal-block info" style={{ marginTop: '20px' }}>
-                      <h3>Six mechanisms were layered — built from 4 core tricks</h3>
-                      <p
-                        style={{
-                          fontSize: '14px',
-                          color: 'var(--muted)',
-                          marginBottom: '16px',
-                          lineHeight: 1.7,
-                        }}
-                      >
-                        The feed combined four teachable tricks (fake expert, emotional hijack,
-                        social proof, false urgency) with two delivery tactics that make them land
-                        harder. Next you&apos;ll learn the four tricks in detail — and how to spot
-                        them in any topic.
+                    <div className="reveal-block info">
+                      <h3>Six things were working on you</h3>
+                      <p className="reveal-lede">
+                        The first four are the tricks you&apos;ll learn in the next chapter. The
+                        last two are about how the posts reached you.
                       </p>
                       <ul className="trick-list">
-                        <li>
-                          <span className="trick-num">01</span>
-                          <span>
-                            <strong>Fake expert</strong> (authority bias) — a credentialled badge
-                            shifts belief before you read a word.
-                          </span>
-                        </li>
-                        <li>
-                          <span className="trick-num">02</span>
-                          <span>
-                            <strong>Social proof</strong> — hundreds of thousands of likes are treated
-                            by your brain as evidence of truth.
-                          </span>
-                        </li>
-                        <li>
-                          <span className="trick-num">03</span>
-                          <span>
-                            <strong>Emotional hijack</strong> (anecdotal anchoring) — the personal
-                            story activates empathy, bypassing analytical processing.
-                          </span>
-                        </li>
-                        <li>
-                          <span className="trick-num">04</span>
-                          <span>
-                            <strong>Social proof</strong> (the ratio effect) — the sceptic getting
-                            ratio&apos;d teaches you that doubt is socially costly.
-                          </span>
-                        </li>
-                        <li>
-                          <span className="trick-num">05</span>
-                          <span>
-                            <strong>Also at work: inoculation framing</strong> — &quot;I&apos;m not
-                            saying panic&quot; and &quot;off the record&quot; simulate intellectual
-                            honesty.
-                          </span>
-                        </li>
-                        <li>
-                          <span className="trick-num">06</span>
-                          <span>
-                            <strong>Also at work: illusory truth</strong> — after 5 posts, the idea is
-                            fluent and familiar. Fluency feels like truth.
-                          </span>
-                        </li>
+                        {FEED_MECHANISMS.map(([name, detail], i) => (
+                          <li key={name}>
+                            <span className="trick-num">{String(i + 1).padStart(2, '0')}</span>
+                            <span>
+                              <strong>{name}.</strong> {detail}
+                            </span>
+                          </li>
+                        ))}
                       </ul>
                     </div>
 
-                    <div className="reveal-block amber" style={{ marginTop: '20px' }}>
-                      <h3>Why children are far more vulnerable</h3>
+                    <div className="reveal-block amber">
+                      <h3>Why this hits children harder</h3>
                       <p>
-                        Adults have imperfect but developed sceptical heuristics. Children
-                        haven&apos;t. They haven&apos;t learned that follower counts don&apos;t equal
-                        credibility, that &quot;verified&quot; is meaningless about accuracy, or that
-                        emotional resonance isn&apos;t evidence. A 10-year-old doesn&apos;t see
-                        manipulation — they see consensus reality. The belief doesn&apos;t just stick
-                        — it becomes a lens.
+                        Most adults have learned, slowly and imperfectly, that a big follower
+                        count proves nothing and that a tick can be bought. A ten-year-old
+                        hasn&apos;t had the time. To them a feed like this one looks like what
+                        everybody thinks. Five posts in a row saying the same thing is, as far
+                        as they can tell, the world agreeing.
                       </p>
                     </div>
                   </>
@@ -450,42 +390,30 @@ export function Chapter1({
                 {isAI && (
                   <>
                     <div className="reveal-block danger">
-                      <h3>Every citation the AI gave you was invented.</h3>
-                      <p id="reveal-detail">{aiScenario.revealDetail}</p>
+                      <h3>The chatbot made it up, with links.</h3>
+                      <p>{aiScenario.revealDetail}</p>
                     </div>
 
-                    <div className="reveal-block info" style={{ marginTop: '20px' }}>
-                      <h3>Four patterns were at work</h3>
-                      <p
-                        style={{
-                          fontSize: '14px',
-                          color: 'var(--muted)',
-                          marginBottom: '16px',
-                          lineHeight: 1.7,
-                        }}
-                      >
-                        No fake accounts, no like counts, no breaking-news graphics. Just a
-                        helpful voice, alone with you, agreeing with you. These are the four
-                        patterns to watch for in any AI conversation:
+                    <div className="reveal-block info">
+                      <h3>Four patterns to watch for</h3>
+                      <p className="reveal-lede">
+                        There were no fake accounts here and no like counts. There was one
+                        helpful voice, agreeing with you.
                       </p>
                       <ul className="trick-list">
-                        {AI_PATTERNS.map((p, i) => (
-                          <li key={p.name}>
+                        {AI_PATTERNS.map(([name, detail], i) => (
+                          <li key={name}>
                             <span className="trick-num">{String(i + 1).padStart(2, '0')}</span>
                             <span>
-                              <strong>{p.name}</strong> — {p.detail}
+                              <strong>{name}.</strong> {detail}
                             </span>
                           </li>
                         ))}
                       </ul>
                     </div>
 
-                    <div className="reveal-block green" style={{ marginTop: '20px' }}>
-                      <h3>Same tricks. New delivery system.</h3>
-                      <p style={{ marginBottom: '14px' }}>
-                        Every technique from the social feed has an AI-shaped twin. The
-                        difference: this version talks only to you.
-                      </p>
+                    <div className="reveal-block green">
+                      <h3>The same tricks in a different place</h3>
                       <div className="table-scroll">
                         <table className="compare-table">
                           <thead>
@@ -495,41 +423,73 @@ export function Chapter1({
                             </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <td>Fake expert with a credential badge</td>
-                              <td>Confident prose with invented citations</td>
-                            </tr>
-                            <tr>
-                              <td>380K likes as social proof</td>
-                              <td>Fluent formatting — fluency feels like truth</td>
-                            </tr>
-                            <tr>
-                              <td>Emotional anecdote hijacks empathy</td>
-                              <td>&quot;I understand how worrying this is&quot; — comfort lowers scrutiny</td>
-                            </tr>
-                            <tr>
-                              <td>False urgency — share before it&apos;s deleted</td>
-                              <td>Sycophancy — it agrees before it checks</td>
-                            </tr>
-                            <tr>
-                              <td>The sceptic gets ratio&apos;d</td>
-                              <td>No sceptic exists. Nobody else is in the room.</td>
-                            </tr>
+                            {COMPARE_ROWS.map(([a, b]) => (
+                              <tr key={a}>
+                                <td>{a}</td>
+                                <td>{b}</td>
+                              </tr>
+                            ))}
                           </tbody>
                         </table>
                       </div>
                     </div>
 
-                    <div className="reveal-block amber" style={{ marginTop: '20px' }}>
+                    <div className="reveal-block amber">
                       <h3>Why this is harder to catch than the feed</h3>
                       <p>
-                        A feed at least shows you other people — including, sometimes, the one
-                        sceptic asking for sources. A chat has no crowd, no dissent, no
-                        community notes. The conversation is tailored to your premise, delivered
-                        in the tone of a knowledgeable friend, and witnessed by no one. If the
-                        citations are invented, there is nobody in the room to say so — unless
-                        you&apos;ve learned to ask. The rule: <strong style={{ color: 'var(--white)' }}>
-                        confidence is not a source. Ask for one, then check it exists.</strong>
+                        A feed at least shows you other people, and sometimes one of them is
+                        asking for a source. A chat has no audience. It is shaped around your
+                        question, it sounds like a well-read friend, and it may remember
+                        enough about you to say the comforting thing. A link at the bottom
+                        looks like proof, and most of us never click it.{' '}
+                        <strong>
+                          Open the link. Find the sentence. If it isn&apos;t there, the answer
+                          has no source.
+                        </strong>
+                      </p>
+                      <p style={{ marginTop: '10px' }}>
+                        Real assistants are usually more careful than this script. They also
+                        get things wrong in exactly these ways, and the same patterns can be
+                        built in on purpose by anyone who sets up a chatbot to sell or
+                        persuade.
+                      </p>
+                    </div>
+                  </>
+                )}
+
+                {isCall && (
+                  <>
+                    <div className="reveal-block danger">
+                      <h3>{call.revealTitle}</h3>
+                      <p>{call.revealDetail}</p>
+                    </div>
+
+                    <div className="reveal-block info">
+                      <h3>What was used on you</h3>
+                      <ul className="trick-list">
+                        {uniqueTags(call.messages).map((t, i) => (
+                          <li key={t.text}>
+                            <span className="trick-num">{String(i + 1).padStart(2, '0')}</span>
+                            <span>{t.text}.</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="reveal-block green">
+                      <h3>The one move that ends it</h3>
+                      <p>{call.check}</p>
+                    </div>
+
+                    <div className="reveal-block amber">
+                      <h3>You can&apos;t solve this by listening harder</h3>
+                      <p>
+                        A few years ago you could catch a fake by the robotic voice or the odd
+                        hands. That advice has expired. A cloned voice now needs only a few
+                        seconds of audio. In a 2023 study, listeners missed about a quarter of
+                        fake voice clips, and the tools have improved since. So stop trying to judge the voice. Check the channel
+                        instead: hang up, and contact the person yourself on a number you
+                        already had.
                       </p>
                     </div>
                   </>
@@ -537,29 +497,23 @@ export function Chapter1({
 
                 <div className="rerun-box">
                   <p>
-                    Want to test yourself on {isAI ? 'the other medium or ' : ''}a different
-                    topic?{' '}
+                    There are two other ways in, and more scenarios in each.{' '}
                     <button type="button" className="link-btn" onClick={rerun}>
-                      Run the experiment again ↺
+                      Run it again ↺
                     </button>
                   </p>
                 </div>
 
-                <div style={{ marginTop: '24px' }}>
-                  <button
-                    type="button"
-                    className="btn-primary"
-                    onClick={() => scrollToChapter(2)}
-                  >
-                    Learn the 4 tricks in detail →
+                <div className="btn-row">
+                  <button type="button" className="btn-primary" onClick={() => scrollToChapter(2)}>
+                    Learn the five tricks →
                   </button>
                   <button
                     type="button"
                     className="btn-ghost"
-                    style={{ marginLeft: '12px' }}
-                    onClick={() => scrollToChapter(6)}
+                    onClick={() => scrollToChapter(isCall ? 3 : 7)}
                   >
-                    Skip to the lesson plan →
+                    {isCall ? 'What to do about fake calls →' : 'Skip to the lesson plan →'}
                   </button>
                 </div>
               </div>

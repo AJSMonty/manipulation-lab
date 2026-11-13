@@ -1,167 +1,175 @@
-const TRICK_TIPS = {
-  'Fake expert': 'Add a credential badge and vague institutional caveat — specifics are checkable.',
-  'Emotional hijack': 'Use feeling words; avoid stating a checkable claim.',
-  'Social proof': 'Inflate likes and shares — numbers feel like consensus.',
-  'False urgency': 'Use NOW, deadlines, and "before it\'s deleted" — urgency without content works.',
-};
+import { useState } from 'react';
 
-export function Chapter4({ builder, setBuilder, scrollToChapter }) {
-  const { trick, name, cred, claim, likes } = builder;
-  const trickTip = TRICK_TIPS[trick] || '';
+function Post({ av, avBg, avCol, name, badge, handle, children, likes, shares }) {
+  return (
+    <>
+      <div className="post-hdr">
+        <div className="post-av" style={{ background: avBg, color: avCol }}>
+          {av}
+        </div>
+        <div className="post-meta">
+          <div className="post-name">
+            {name} {badge && <span className="post-badge badge-purple">{badge}</span>}
+          </div>
+          <div className="post-handle">{handle}</div>
+        </div>
+      </div>
+      <div className="post-body">{children}</div>
+      {likes && (
+        <div className="post-stats">
+          <span>
+            <strong>{likes}</strong> likes
+          </span>
+          <span>
+            <strong>{shares}</strong> shares
+          </span>
+        </div>
+      )}
+    </>
+  );
+}
 
-  const initials =
-    name
-      .replace(/[^a-zA-Z ]/g, '')
-      .trim()
-      .split(' ')
-      .map((w) => w[0] || '')
-      .join('')
-      .substring(0, 2)
-      .toUpperCase() || '?';
+const QUESTIONS = [
+  {
+    id: 'q1',
+    prompt: 'Which tricks are being used?',
+    answers: ['False urgency only', 'Social proof only', 'Four at once', 'Emotional hijack only'],
+    correct: 'Four at once',
+    post: (
+      <Post av="DW" avBg="#2d1b00" avCol="#fbbf24" name="DrWellness_UK" badge="PhD Health" handle="@drwellness · 1h" likes="87,400" shares="34,200">
+        NEW RESEARCH: Energy drinks destroy your memory within 3 months. I&apos;ve seen it in
+        my practice. Schools need to act NOW. Share this with every parent you know before
+        more damage is done.
+      </Post>
+    ),
+    right:
+      'Yes. The PhD badge is the fake expert. "Destroy" and "damage" are there to frighten you. 87,400 likes is the social proof, and "NOW" is the urgency. Real posts usually stack several tricks.',
+    wrong:
+      'Look again. There\'s a PhD badge (fake expert), frightening words like "destroy" and "damage" (emotional hijack), 87,400 likes (social proof) and "NOW" (false urgency). It uses four at once.',
+  },
+  {
+    id: 'q2',
+    prompt: 'Which tricks are being used?',
+    answers: ['Fake expert', 'Emotional hijack and social proof', 'False urgency only', 'All of them'],
+    correct: 'Emotional hijack and social proof',
+    post: (
+      <Post av="MP" avBg="#1a3d2b" avCol="#86efac" name="MumOfPrimary4" handle="@mum4real · 3h" likes="1,240,000" shares="890,000">
+        I am absolutely heartbroken. My daughter came home crying today because of what&apos;s
+        being taught in schools now. I can&apos;t even type it out. Please share this before it
+        happens to your child. 1.2 million parents already have.
+      </Post>
+    ),
+    right:
+      'Yes. The post never says what happened. It runs on "heartbroken" and "crying", plus 1.2 million shares to suggest everyone already agrees. You felt something and were told nothing.',
+    wrong:
+      'There\'s no expert here, and the urgency is only hinted at. The post never says what happened. It runs on the upsetting story and the 1.2 million shares.',
+  },
+  {
+    id: 'q3',
+    prompt: 'What is the main trick?',
+    answers: ['Emotional hijack', 'Fake expert', 'False urgency', 'Social proof'],
+    correct: 'False urgency',
+    post: (
+      <Post av="AL" avBg="#3d1a1a" avCol="#fca5a5" name="AlertLeaks" handle="@alertleaks · 45m" likes="22,100" shares="45,800">
+        THEY&apos;RE DELETING THIS. Screenshot now. A government source has confirmed what
+        we&apos;ve suspected for months. This video will be taken down within the hour. SHARE
+        BEFORE IT&apos;S GONE.
+      </Post>
+    ),
+    right:
+      'Yes. Every sentence is about time running out, and it never tells you what "this" is. A deadline with nothing attached is the trick in its plainest form.',
+    wrong:
+      'This one is nearly all false urgency. Every sentence is about time running out, and it never tells you what the claim is.',
+  },
+  {
+    id: 'q4',
+    prompt: 'This one arrives as a message, with a voice note. Which tricks?',
+    answers: ['Social proof', 'Fake expert', 'Borrowed voice and false urgency', 'Emotional hijack only'],
+    correct: 'Borrowed voice and false urgency',
+    post: (
+      <Post av="?" avBg="#1e3a5f" avCol="#93c5fd" name="07700 900318" handle="Not in your contacts · 19:52">
+        Nan it&apos;s Jamie, lost my phone so I&apos;m on my mate&apos;s. I&apos;m in a bit of
+        trouble and I need £400 by tonight. Please don&apos;t tell Mum, she&apos;ll go mad. Sent
+        you a voice note so you know it&apos;s me x
+      </Post>
+    ),
+    right:
+      'Yes. It claims to be someone Nan loves and sets a deadline of tonight. "Don\'t tell Mum" removes the person most likely to spot it. The voice note proves nothing, because a voice can be copied from a few seconds of video.',
+    wrong:
+      'It does pull at the heart, but the main move is pretending to be Jamie (borrowed voice) with a deadline of tonight (false urgency). "Don\'t tell Mum" removes the person most likely to spot it.',
+  },
+];
 
-  const displayName = name || 'Your account name';
-  const isDefaultName = !name;
+export function Chapter4({ scrollToChapter }) {
+  const [picked, setPicked] = useState({});
+  const answered = Object.keys(picked).length;
+  const score = QUESTIONS.filter((q) => picked[q.id] === q.correct).length;
 
   return (
     <section className="chapter" id="ch4">
       <div className="container">
-        <div className="ch-label">Chapter 04 — Build It</div>
-        <h2 className="ch-title">Now you make one.</h2>
+        <div className="ch-label">Chapter 04 · Spot It</div>
+        <h2 className="ch-title">
+          Four messages.
+          <br />
+          Which tricks?
+        </h2>
         <p className="ch-intro">
-          This is the most important activity. Constructing a manipulative post teaches your
-          brain exactly how they work from the inside — creating immunity that reading about
-          them never achieves.
+          All four are fake. Pick the answer that best describes what each one is doing. The
+          explanation appears once you&apos;ve chosen.
         </p>
 
-        <div className="builder-grid fade-up">
-          <div className="build-form">
-            <label>Choose your trick</label>
-            <select
-              value={trick}
-              onChange={(e) => setBuilder((b) => ({ ...b, trick: e.target.value }))}
-            >
-              <option>Fake expert</option>
-              <option>Emotional hijack</option>
-              <option>Social proof</option>
-              <option>False urgency</option>
-            </select>
-            {trickTip && (
-              <p
-                style={{
-                  fontSize: '13px',
-                  color: 'var(--muted)',
-                  marginTop: '-8px',
-                  marginBottom: '16px',
-                  lineHeight: 1.6,
-                }}
-              >
-                {trickTip}
-              </p>
-            )}
-
-            <label>Account name (make it sound credible)</label>
-            <input
-              type="text"
-              placeholder="e.g. Dr_HealthWatch_UK"
-              value={name}
-              onChange={(e) => setBuilder((b) => ({ ...b, name: e.target.value }))}
-            />
-
-            <label>Credential or badge (optional)</label>
-            <input
-              type="text"
-              placeholder="e.g. PhD Neuroscience"
-              value={cred}
-              onChange={(e) => setBuilder((b) => ({ ...b, cred: e.target.value }))}
-            />
-
-            <label>Your claim (keep it vague — specifics are checkable)</label>
-            <textarea
-              placeholder="Write your manipulative post here...
-
-Tip: don't state what the claim actually is. Just gesture at it."
-              value={claim}
-              onChange={(e) => setBuilder((b) => ({ ...b, claim: e.target.value }))}
-            />
-
-            <label>Fake engagement numbers</label>
-            <input
-              type="text"
-              placeholder="e.g. 847,000 likes"
-              value={likes}
-              onChange={(e) => setBuilder((b) => ({ ...b, likes: e.target.value }))}
-            />
-          </div>
-
-          <div>
-            <div className="preview-label">LIVE PREVIEW</div>
-            <div className="build-preview">
-              <div className="post-hdr">
-                <div
-                  className="post-av"
-                  style={{ background: '#2d1b6e', color: '#c4b5fd' }}
-                >
-                  {initials}
+        {QUESTIONS.map((q) => {
+          const choice = picked[q.id];
+          const isRight = choice === q.correct;
+          return (
+            <div key={q.id} className="quiz-post fade-up">
+              {q.post}
+              <div className="quiz-answers">
+                <p>{q.prompt}</p>
+                <div className="ans-grid">
+                  {q.answers.map((a) => (
+                    <button
+                      key={a}
+                      type="button"
+                      className={`ans-btn${
+                        choice === a ? (isRight ? ' correct' : ' wrong') : ''
+                      }${choice && !isRight && a === q.correct ? ' correct' : ''}`}
+                      disabled={choice !== undefined}
+                      onClick={() => setPicked((p) => ({ ...p, [q.id]: a }))}
+                    >
+                      {a}
+                    </button>
+                  ))}
                 </div>
-                <div className="post-meta">
+                {choice && (
                   <div
-                    className="post-name"
-                    style={{ color: isDefaultName ? 'var(--muted)' : 'var(--white)' }}
+                    className={`ans-feedback ${isRight ? 'correct' : 'wrong'}`}
+                    style={{ display: 'block' }}
+                    role="status"
                   >
-                    {displayName}
+                    {isRight ? q.right : q.wrong}
                   </div>
-                  {cred && (
-                    <span className="post-badge badge-purple">{cred}</span>
-                  )}
-                  <div>
-                    <div className="trick-badge-preview">
-                      TRICK: {trick.toUpperCase()}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                className="post-body"
-                style={{
-                  fontStyle: claim ? 'normal' : 'italic',
-                  color: claim ? 'rgba(245,242,236,0.85)' : 'var(--muted)',
-                }}
-              >
-                {claim || 'Your post will appear here...'}
-              </div>
-              <div className="post-stats" style={{ color: 'var(--muted)' }}>
-                {likes || '0 likes'}
+                )}
               </div>
             </div>
+          );
+        })}
+
+        {answered === QUESTIONS.length && (
+          <div className="quiz-done">
+            <div className="quiz-score">
+              <div className="qs-number">
+                {score}/{QUESTIONS.length}
+              </div>
+              <div className="qs-label">spotted correctly</div>
+            </div>
+            <p>Spotting them is the easier half. Next you&apos;ll write one.</p>
+            <button type="button" className="btn-primary" onClick={() => scrollToChapter(5)}>
+              Build a fake post →
+            </button>
           </div>
-        </div>
-
-        <div className="build-insight fade-up">
-          <p>
-            Notice how easy that was? You didn&apos;t need expertise — just the recipe.{' '}
-            <strong>
-              This is what an influence operation does at scale:
-            </strong>{' '}
-            500 posts like this per hour, targeting people who&apos;ve shown prior interest in
-            the topic, via thousands of coordinated accounts. The feed you saw earlier took 5
-            posts. Real campaigns use 5,000.
-          </p>
-          <p style={{ marginTop: '12px' }}>
-            <strong>The most important question:</strong> if a 10-minute exercise gave you this
-            capability, what does a well-funded organisation with six months and a political
-            objective do with it?
-          </p>
-        </div>
-
-        <div style={{ marginTop: '32px' }}>
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={() => scrollToChapter(5)}
-          >
-            See the research →
-          </button>
-        </div>
+        )}
       </div>
     </section>
   );

@@ -1,182 +1,136 @@
-export function Chapter2({ scrollToChapter, toggleTrick }) {
+import { useState } from 'react';
+
+const TRICKS = [
+  {
+    name: 'The Fake Expert',
+    hook: 'A title does the persuading before you read a word',
+    body: [
+      'We lean on experts because we have to. Nobody can check everything. So a "Dr" or a "PhD" in a bio makes us read the next sentence more generously. Anyone can type those letters.',
+      'A real expert is easy to find. They have a university page, published work, a professional register. Search the name and the field together. If nothing comes back, the title was decoration.',
+      'AI has made this cheaper. A profile photo, a believable bio and a year of plausible posts can be generated in an afternoon.',
+    ],
+    example: '"I\'ve spent 18 years studying this. I can\'t speak for my institution, but..."',
+    note: 'The line about the institution borrows its authority and stops you ringing it.',
+  },
+  {
+    name: 'Emotional Hijack',
+    hook: 'The feeling arrives before the thinking',
+    body: [
+      'Fear, anger and pity are fast. Checking is slow. A post that makes you furious in two seconds has had its effect before you\'ve asked whether it\'s true.',
+      'Look at the mum\'s post in the quiz further down. It makes no claim at all, and most people still come away believing something happened.',
+      'A strong feeling tells you how the post was built. It tells you nothing about whether the post is accurate. Treat it as the cue to slow down.',
+    ],
+    example: '"I am heartbroken. My daughter came home crying. I can\'t even type it out."',
+    note: 'Nothing is stated, so there is nothing you could check.',
+  },
+  {
+    name: 'Social Proof',
+    hook: '380K likes feels like 380K people checked',
+    body: [
+      'Following the crowd is sensible offline. If everyone is leaving the building, leave. Online, the crowd can be manufactured. Likes are sold in bulk, and one person with AI tools can run thousands of accounts that each write in their own style.',
+      'It works in reverse too. When the one person asking for evidence gets buried under angry replies, everyone watching learns to keep their doubts to themselves.',
+      'Seeing a claim five times also makes it feel familiar, and familiar things feel true. Psychologists call that the illusory truth effect.',
+    ],
+    example: '"1.2 million parents already know about this."',
+    note: 'That is a number. It says nothing about whether the thing is true.',
+  },
+  {
+    name: 'False Urgency',
+    hook: 'The hurry is there to stop you checking',
+    body: [
+      'Under time pressure, people act first and check later, if they check at all. Every scam and most viral hoaxes come with a deadline: now, today, before it\'s deleted, before the shop shuts.',
+      'Real news will still be there in ten minutes. Your real bank will still be your bank after you hang up and ring back. When a message gives you a reason you can\'t wait, that is your reason to wait.',
+    ],
+    example: '"SHARE BEFORE IT\'S GONE. They\'re deleting this within the hour."',
+    note: 'It never says what "this" is. The deadline is all you get.',
+  },
+  {
+    name: 'The Borrowed Voice',
+    hook: 'It arrives as someone you already trust',
+    isNew: true,
+    body: [
+      'The first four tricks try to make a stranger believable. This one skips that step and turns up as your daughter, your bank or your boss. A voice can be cloned from a few seconds of video. A face can be generated live on a call. The number on your screen can be faked.',
+      'You can\'t reliably hear or see the difference any more, so don\'t try to. The thing a fake can\'t do is pick up when you ring the real person on the number you already have.',
+      'It nearly always travels with false urgency: someone you love, in trouble, with a deadline.',
+    ],
+    example: '"Mum it\'s me, I\'ve got a new number. Don\'t ring the old one, it\'s dead."',
+    note: 'The second sentence is the trick. It removes the one check that would have worked.',
+  },
+];
+
+export function Chapter2({ scrollToChapter }) {
+  const [open, setOpen] = useState(null);
+
   return (
-    <>
-      <section className="chapter" id="ch2">
-        <div className="container--wide">
-          <div className="container" style={{ padding: '0' }}>
-            <div className="ch-label">Chapter 02 — The Toolkit</div>
-            <h2 className="ch-title">
-              The 4 tricks used on
-              <br />
-              everyone, every day
-            </h2>
-            <p className="ch-intro">
-              These aren&apos;t sophisticated techniques requiring expertise. They are simple,
-              scalable, and devastatingly effective. In the experiment you saw six mechanisms at
-              work — they all boil down to these four. Click each to understand the mechanism.
+    <section className="chapter" id="ch2">
+      <div className="container--wide">
+        <div className="container" style={{ padding: '0' }}>
+          <div className="ch-label">Chapter 02 · The Toolkit</div>
+          <h2 className="ch-title">
+            Five tricks.
+            <br />
+            You just met them.
+          </h2>
+          <p className="ch-intro">
+            None of this needs skill or money. Four of the tricks are as old as advertising.
+            The fifth used to need an actor and a good script, and now needs a laptop. Open
+            each one to see how it works and what to do about it.
+          </p>
+        </div>
+
+        <div className="tricks-grid fade-up">
+          {TRICKS.map((t, i) => {
+            const isOpen = open === i;
+            return (
+              <div key={t.name} className={`trick-card${isOpen ? ' open' : ''}`}>
+                <button
+                  type="button"
+                  className="tc-head"
+                  aria-expanded={isOpen}
+                  onClick={() => setOpen(isOpen ? null : i)}
+                >
+                  <span className="tc-num">
+                    TRICK {String(i + 1).padStart(2, '0')}
+                    {t.isNew && <span className="tc-new">New</span>}
+                  </span>
+                  <span className="tc-name">{t.name}</span>
+                  <span className="tc-hook">{t.hook}</span>
+                  <span className="tc-toggle">{isOpen ? 'Close ↑' : 'How it works ↓'}</span>
+                </button>
+                <div className={`tc-body${isOpen ? ' open' : ''}`}>
+                  {t.body.map((p) => (
+                    <p key={p}>{p}</p>
+                  ))}
+                  <div className="tc-example">
+                    {t.example}
+                    <br />
+                    {t.note}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="container fade-up" style={{ padding: '0' }}>
+          <div className="aside-box">
+            <p className="aside-label">TWO SMALLER THINGS TO LISTEN FOR</p>
+            <p>
+              <strong>Honest-sounding hedges.</strong> &quot;I&apos;m not saying panic&quot;,
+              &quot;off the record&quot;, &quot;draw your own conclusions&quot;. They sound
+              careful and commit to nothing you could check.{' '}
+              <strong>Giving a little ground.</strong> &quot;That oversimplifies it, but...&quot;
+              A small concession makes whatever comes next sound fair.
             </p>
           </div>
-
-          <div className="tricks-grid fade-up">
-            <div className="trick-card" onClick={(e) => toggleTrick(e.currentTarget)}>
-              <div className="tc-num">TRICK 01</div>
-              <div className="tc-name">The Fake Expert</div>
-              <div className="tc-hook">A badge does the convincing before you read a word</div>
-              <div className="tc-toggle">Tap to reveal the mechanism ↓</div>
-              <div className="tc-body">
-                <p>
-                  Your brain uses authority as a shortcut. When someone has a
-                  credentialed-sounding title — &quot;PhD&quot;, &quot;Dr.&quot;, &quot;Senior
-                  Researcher&quot; — you unconsciously lower your critical threshold before
-                  engaging with their claim. This is called <em>authority bias</em>, and
-                  it&apos;s a completely rational heuristic that manipulators exploit trivially.
-                </p>
-                <p style={{ marginTop: '10px' }}>
-                  The defence: credentials are verifiable. If a &quot;Dr. Patel&quot; makes a
-                  claim, searching &quot;Dr R Patel neuroscience&quot; takes 10 seconds. Real
-                  experts have institutions, publications, and histories. Invented ones
-                  don&apos;t.
-                </p>
-                <div className="tc-example">
-                  &quot;I&apos;ve spent 18 years studying this. I cannot speak for my institution
-                  but...&quot;
-                  <br />— The institution caveat is designed to block verification while borrowing
-                  the authority of having one.
-                </div>
-              </div>
-            </div>
-
-            <div className="trick-card" onClick={(e) => toggleTrick(e.currentTarget)}>
-              <div className="tc-num">TRICK 02</div>
-              <div className="tc-name">Emotional Hijack</div>
-              <div className="tc-hook">Your feeling fires before your thinking can</div>
-              <div className="tc-toggle">Tap to reveal the mechanism ↓</div>
-              <div className="tc-body">
-                <p>
-                  Emotional responses fire in milliseconds. Rational evaluation takes 5–10
-                  seconds. Any content that triggers a strong emotion — fear, outrage, sadness,
-                  disgust — creates a window where you are most likely to share, believe, or act
-                  before your analytical brain has engaged.
-                </p>
-                <p style={{ marginTop: '10px' }}>
-                  In the Spot It quiz, the mum&apos;s post contained zero factual claims. It was
-                  entirely emotional — and it worked. The brain doesn&apos;t distinguish between
-                  emotionally resonant content and evidenced content. Strong feeling registers as
-                  strong signal.
-                </p>
-                <div className="tc-example">
-                  &quot;I am heartbroken. My daughter came home crying. I can&apos;t even type it
-                  out.&quot;
-                  <br />— No claim. Just emotion. But you believed something.
-                </div>
-              </div>
-            </div>
-
-            <div className="trick-card" onClick={(e) => toggleTrick(e.currentTarget)}>
-              <div className="tc-num">TRICK 03</div>
-              <div className="tc-name">Social Proof</div>
-              <div className="tc-hook">380K likes is treated as evidence of truth</div>
-              <div className="tc-toggle">Tap to reveal the mechanism ↓</div>
-              <div className="tc-body">
-                <p>
-                  Social proof is an entirely sensible heuristic in the physical world: if
-                  everyone is running away from something, you probably should too. Online, this
-                  instinct gets weaponised. Large engagement numbers feel like a peer-reviewed
-                  consensus. They&apos;re not. 100,000 fake likes can be purchased for under £20.
-                </p>
-                <p style={{ marginTop: '10px' }}>
-                  The ratio effect adds another layer: when the sceptic gets 29K downvotes,
-                  onlookers learn that expressing doubt is socially costly. This isn&apos;t just
-                  about believing the claim — it&apos;s about suppressing your own contrary
-                  instinct to avoid social punishment. After several posts, repetition also
-                  creates fluency — and fluency feels like truth.
-                </p>
-                <div className="tc-example">
-                  &quot;1.2 million parents already know about this.&quot;
-                  <br />— A number is not a vote for truth. It is a number.
-                </div>
-              </div>
-            </div>
-
-            <div className="trick-card" onClick={(e) => toggleTrick(e.currentTarget)}>
-              <div className="tc-num">TRICK 04</div>
-              <div className="tc-name">False Urgency</div>
-              <div className="tc-hook">Speed switches off your checking instinct</div>
-              <div className="tc-toggle">Tap to reveal the mechanism ↓</div>
-              <div className="tc-body">
-                <p>
-                  Urgency is a decision-making override. When something feels time-sensitive, the
-                  brain deprioritises verification in favour of action. This is why scams,
-                  phishing emails, and manipulation campaigns all use the same language:
-                  &quot;NOW&quot;, &quot;before it&apos;s deleted&quot;, &quot;they don&apos;t
-                  want you to see this.&quot;
-                </p>
-                <p style={{ marginTop: '10px' }}>
-                  Real important information does not expire in ten minutes. No genuine scientific
-                  finding, government document, or breaking news story disappears if you take 30
-                  seconds to check the source. Urgency is almost always a signal to pause, not to
-                  act.
-                </p>
-                <div className="tc-example">
-                  &quot;SHARE BEFORE IT&apos;S GONE. They&apos;re deleting this within the
-                  hour.&quot;
-                  <br />— Notice it never tells you what &quot;this&quot; is. Urgency without
-                  content is pure manipulation.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            className="container fade-up"
-            style={{
-              padding: '0',
-              marginTop: '32px',
-              paddingBottom: '0',
-            }}
-          >
-            <div
-              style={{
-                padding: '20px 24px',
-                background: 'rgba(92,63,196,0.1)',
-                border: '1px solid rgba(92,63,196,0.25)',
-                borderRadius: '4px',
-              }}
-            >
-              <p
-                style={{
-                  fontSize: '11px',
-                  fontFamily: 'var(--font-head)',
-                  fontWeight: 700,
-                  letterSpacing: '0.12em',
-                  color: 'var(--purple)',
-                  marginBottom: '10px',
-                }}
-              >
-                ALSO AT WORK IN THE FEED
-              </p>
-              <p style={{ fontSize: '14px', color: 'var(--muted)', lineHeight: 1.7 }}>
-                <strong style={{ color: 'var(--white)' }}>Inoculation framing</strong> — phrases
-                like &quot;off the record&quot; and &quot;I&apos;m not saying panic&quot; borrow
-                the tone of honesty while avoiding checkable claims.{' '}
-                <strong style={{ color: 'var(--white)' }}>Illusory truth</strong> — after five
-                posts on the same topic, the idea feels familiar; familiarity feels like
-                evidence even when every post was fabricated.
-              </p>
-            </div>
-          </div>
-
-          <div className="container" style={{ padding: '0', marginTop: '32px' }}>
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={() => scrollToChapter(3)}
-            >
-              Test yourself: spot the tricks →
-            </button>
-          </div>
         </div>
-      </section>
-    </>
+
+        <div className="container" style={{ padding: '0', marginTop: '32px' }}>
+          <button type="button" className="btn-primary" onClick={() => scrollToChapter(3)}>
+            What to do when it&apos;s a call →
+          </button>
+        </div>
+      </div>
+    </section>
   );
 }

@@ -1,4 +1,9 @@
-export function PhoneFrame({ variant = 'social', children }) {
+export function PhoneFrame({ variant = 'social', header, children }) {
+  const chatHeader =
+    variant === 'ai'
+      ? { av: 'AI', name: 'Assistant', sub: 'Always on · remembers your chats', dot: true }
+      : header;
+
   return (
     <div className={`phone-frame phone-${variant}`}>
       <div className="phone-status">
@@ -14,11 +19,11 @@ export function PhoneFrame({ variant = 'social', children }) {
         </div>
       ) : (
         <div className="phone-chat-hdr">
-          <div className="chat-hdr-av">AI</div>
+          <div className="chat-hdr-av">{chatHeader.av}</div>
           <div>
-            <div className="chat-hdr-name">Assistant</div>
+            <div className="chat-hdr-name">{chatHeader.name}</div>
             <div className="chat-hdr-sub">
-              <span className="chat-hdr-dot" /> Always online · replies instantly
+              {chatHeader.dot && <span className="chat-hdr-dot" />} {chatHeader.sub}
             </div>
           </div>
         </div>
